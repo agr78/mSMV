@@ -84,9 +84,9 @@ end
 % imwrite(uint8(255*apply_wl(sag_fig(:,:,sag),0.5,0)),strcat('figures\healthy_subjects\hs_sag',string(sag),'.png'))
 %%
 names = {'control','mpdf','smv','msmv','lbv','vsharp'};
-hs = 5;
+hs = 10;
 for k = 1:min(size(QSMs_ax))
-    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),20,192,215,[384 384],strcat(names{k},string(hs),'.png'))
+    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),23,215,210,[384 384],strcat(names{k},string(hs),'.png'))
     cd ..
     cd ..
 end
