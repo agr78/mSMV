@@ -1,0 +1,28 @@
+% Create fit
+%
+% Helper function adapted from MATLAB curve fitting toolbox
+%
+% Alexandra G. Roberts
+% MRI Lab
+% Cornell University
+% 03/31/2022
+
+function [fitresult, gof] = createFit(x,y)
+
+% Reshape input data to columns and match data types
+[xData, yData] = prepareCurveData(x,y);
+
+% Use linear polynomial curve fit
+ft = fittype('poly1');
+
+% Fit model to data
+[fitresult, gof] = fit(xData,yData,ft);
+
+% Plot
+h = plot(fitresult,xData,yData);
+
+grid on
+
+
+
+
