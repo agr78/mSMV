@@ -94,7 +94,7 @@ RDF = RDF_LBV;
 Mask = Mask_LBV{idxmin_LBV};
 save('data\simulation\RDF_sim_LBV.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
 Mask_Nstd = Mask-imbinarize(N_std.*Mask,prctile(N_std(:).*Mask(:),90)).*(Mask-MaskErode(Mask,matrix_size,voxel_size,radius));
-RDF = RDF_c;
+RDF = RDF-SMV(RDF_c,matrix_size,voxel_size,radius);
 Mask = Mask_Nstd;
 save('data\simulation\RDF_sim_nstd.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
 msmv('data\simulation\RDF_sim.mat','data\simulation\RDF_sim_msmv.mat')
@@ -119,7 +119,7 @@ roi_mask = load('sim_roi_mask.mat').roi_mask;
 QSMs = {Mask_c.*QSM_ctrl 
         Mask_c.*QSM_mPDF
         Mask_SMV.*QSM_sim_smv 
-        Mask_c.*QSM_sim_nstd;
+        QSM_sim_nstd;
         Mask_SHARPs{idxmax_SHARP}.*QSM_sim_SHARP 
         Mask_RESHARPs{idxmax_RESHARP}.*QSM_sim_RESHARP 
         Mask_VSHARP.*QSM_sim_VSHARP 
