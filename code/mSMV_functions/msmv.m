@@ -24,9 +24,11 @@ function msmv(in_file,out_file)
     RDF_e = Mask_e.*(RDF); 
 
     % Find max, on edge via Green's theorem
-    [maxval,idxmax] = max(RDF(:));
+    [maxval,idxmax] = max(abs(RDF(:)));
     [r,c,p] = ind2sub(size(RDF),idxmax);  
-
+    if Mask_e(r,c,p)>0
+        disp('Maximum principle verified')
+    end
     % Perform initial SMV, then address incorrect values at edge
     RDF_s0 = Mask.*(RDF-SMV(RDF,SphereK));
 

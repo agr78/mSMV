@@ -5,10 +5,9 @@ function make_dist_fit(RDF_bk_dist,nbins)
     hold on;
     h = histogram(data,nbins,'Normalization','Probability');
     pd = fitdist(data,'Normal')
-    xValues = -0.4:0.001:0.4;  % for computing the pdf
+    xValues = -0.5:0.01:0.5;  % for computing the pdf
     y = pdf(pd,xValues);   % adjust to match probability based on nbins & range
-    y = rescale(y,0,0.8,'InputMin',min(y(:)),'InputMax',max(y(:)));
-    plot(xValues,y); xlim([-1,1])
+    plot(xValues,y./(max(y(:))*range)); xlim([-1,1])
     title('Sampled background field distribution')
     xlabel('\chi')
     ylabel('\it P(\chi)')
