@@ -97,7 +97,11 @@ Mask_Nstd = Mask-imbinarize(N_std.*Mask,prctile(N_std(:).*Mask(:),90)).*(Mask-Ma
 RDF = RDF-SMV(RDF_c,matrix_size,voxel_size,radius);
 Mask = Mask_Nstd;
 save('data\simulation\RDF_sim_nstd.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
-msmvp('data\simulation\RDF_sim.mat','data\simulation\RDF_sim_msmv.mat')
+msmv('data\simulation\RDF_sim.mat','data\simulation\RDF_sim_msmv.mat')
+Mask = Mask_SMV;
+RDF = Mask_SMV.*(RDF_c-SMV(RDF_c,matrix_size,voxel_size,radius));
+save('data\simulation\RDF_sim_msv.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
+
 
 % QSM reconstruction
 disp('Reconstructing QSM from local fields')
@@ -108,7 +112,7 @@ QSM_sim_VSHARP = MEDI_L1('filename','RDF_sim_VSHARP.mat','lambda',reg_lam,'dipol
 QSM_sim_iSMV = MEDI_L1('filename','RDF_sim_iSMV.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_LBV = MEDI_L1('filename','RDF_sim_LBV.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_msmv =  MEDI_L1('filename','RDF_sim_msmv.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_sim_smv =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_smv =  MEDI_L1('filename','RDF_sim_smv.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_nstd = MEDI_L1('filename', 'RDF_sim_nstd.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',1);
