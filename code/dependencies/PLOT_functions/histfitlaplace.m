@@ -28,6 +28,9 @@ plot(xprim, fx, '-r', 'LineWidth', 1.5)
 % set the axes limits
 dxl = mu - min(x);
 dxr = max(x) - mu;
-xlim([mu-1.1*dxl mu+1.1*dxr])
+xlim([-1 1])
 ylim([0 1.1*max(max(fx), max(get(hHist, 'Values')))])
+title('Residual background field distribution Laplacian fit')
+xlabel('\chi')
+ylabel('\it P(\chi)')
 end
