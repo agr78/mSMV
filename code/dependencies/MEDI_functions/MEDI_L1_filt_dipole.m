@@ -40,9 +40,9 @@
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
-[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
+[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, voxel_size, ...
     delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ...
-    Debug_Mode, lam_CSF, Mask_CSF, opts] = parse_QSM_input(varargin{:});
+    Debug_Mode, lam_CSF, Mask_CSF, opts, dipole_filter] = parse_QSM_input(varargin{:});
 
 %%%%%%%%%%%%%%% weights definition %%%%%%%%%%%%%%
 
@@ -189,8 +189,6 @@ end
             
             fprintf('iter: %d; res_norm_ratio:%8.4f; cost_L2:%8.4f; cost:%8.4f.\n',iter, res_norm_ratio,cost_data_history(iter), cost_reg_history(iter));
             toc
-            
-            
         end
       
         

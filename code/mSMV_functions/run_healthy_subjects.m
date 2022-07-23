@@ -9,10 +9,12 @@ for j = 1:10
     load(file_name)
     cd ..
     radius = 5;
+
     % Store variables that will be overwritten
     RDF_c = RDF;
     Mask_c = Mask;
     Mask_SMV = MaskErode(Mask,matrix_size,voxel_size,radius);
+
     % Preprocess local field with LBV with optimized parameters
     tol = 0.01; 
     depth = -1; 
@@ -28,7 +30,6 @@ for j = 1:10
     
     lbv_filename = strcat(file_name,'_lbv.mat');
     save(strcat('lbv\',lbv_filename),'RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
-    
 
     % Preprocess local field with VSHARP with optimized parameters
     [RDF,Mask] = BKGRemovalVSHARP(RDF_c,Mask,matrix_size);
@@ -40,7 +41,13 @@ for j = 1:10
     msmv_filename = strcat('msmv/',file_name,'_msmv.mat');
     msmv(file_name,msmv_filename)
 
-    % Preprocess local field with mSMV
+    % Preprocess local field with SMV
+    Mask = Mask_SMV;
+    RDF = Mask_SMV.*(RDF_c-SMV(RDF_c,matrix_size,voxel_size,radius));
+    smv_filename = strcat(file_name,'_smv.mat');
+    save(strcat('smv\',smv_filename),'RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
+
+    % Preprocess local field with mPDF
     mpdf_filename = strcat('mpdf/',file_name,'_mpdf.mat');
     mpdf(file_name,mpdf_filename)
     
@@ -48,12 +55,12 @@ for j = 1:10
     % method
     reg_lam = 1000;
     Masks = {Mask_c Mask_c Mask_SMV Mask_c Mask_LBV Mask_VSHARP};
-    QSM_VSHARP = MEDI_L1_filt_dipole('filename',vsharp_filename,'lambda',reg_lam);
-    QSM_LBV = MEDI_L1_orig_dipole('filename',lbv_filename,'lambda',reg_lam);
-    QSM_msmv =  MEDI_L1_filt_dipole('filename',msmv_filename,'lambda',reg_lam);
-    QSM_smv =  MEDI_L1('filename',file_name,'lambda',reg_lam);
-    QSM_ctrl =  MEDI_L1_orig_dipole('filename',file_name,'lambda',reg_lam);
-    QSM_mpdf =  MEDI_L1_orig_dipole('filename',mpdf_filename,'lambda',reg_lam);
+    QSM_VSHARP = MEDI_L1('filename',vsharp_filename,'lambda',reg_lam,'dipole_filter',1);
+    QSM_LBV = MEDI_L1('filename',lbv_filename,'lambda',reg_lam,'dipole_filter',0);
+    QSM_msmv =  MEDI_L1('filename',msmv_filename,'lambda',reg_lam,'dipole_filter',1);
+    QSM_smv =  MEDI_L1('filename',file_name,'lambda',reg_lam,'dipole_filter',1);
+    QSM_ctrl =  MEDI_L1('filename',file_name,'lambda',reg_lam,'dipole_filter',0);
+    QSM_mpdf =  MEDI_L1('filename',mpdf_filename,'lambda',reg_lam,'dipole_filter',0);
     QSMs = {QSM_ctrl QSM_mpdf QSM_smv QSM_msmv QSM_LBV QSM_VSHARP};
     cd 'qsms'
     if save_data == 1
@@ -73,15 +80,7 @@ for j = 1:10
         QSMs_sag{k,j}= sag_view(QSMs_ax{k,j},Masks_ax{k,j},voxel_size);
     end
 end
-% ax = 35;
-% cor = 190;
-% sag = 215;
-% ax_fig = cell2mat(QSMs_ax);
-% cor_fig = cell2mat(QSMs_cor);
-% sag_fig = cell2mat(QSMs_sag);
-% imwrite(uint8(255*apply_wl(ax_fig(:,:,ax),0.5,0)),strcat('figures\healthy_subjects\hs_ax',string(ax),'.png'))
-% imwrite(uint8(255*apply_wl(cor_fig(:,:,cor),0.5,0)),strcat('figures\healthy_subjects\hs_cor',string(cor),'.png'))
-% imwrite(uint8(255*apply_wl(sag_fig(:,:,sag),0.5,0)),strcat('figures\healthy_subjects\hs_sag',string(sag),'.png'))
+
 %%
 names = {'control','mpdf','smv','msmv','lbv','vsharp'};
 hs = 10;

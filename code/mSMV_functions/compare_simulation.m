@@ -97,21 +97,21 @@ Mask_Nstd = Mask-imbinarize(N_std.*Mask,prctile(N_std(:).*Mask(:),90)).*(Mask-Ma
 RDF = RDF-SMV(RDF_c,matrix_size,voxel_size,radius);
 Mask = Mask_Nstd;
 save('data\simulation\RDF_sim_nstd.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
-msmv('data\simulation\RDF_sim.mat','data\simulation\RDF_sim_msmv.mat')
+msmvp('data\simulation\RDF_sim.mat','data\simulation\RDF_sim_msmv.mat')
 
 % QSM reconstruction
 disp('Reconstructing QSM from local fields')
 reg_lam = 100;
-QSM_sim_SHARP = MEDI_L1_orig_dipole('filename','RDF_sim_SHARP.mat','lambda',reg_lam);
-QSM_sim_RESHARP = MEDI_L1_orig_dipole('filename','RDF_sim_RESHARP.mat','lambda',reg_lam);
-QSM_sim_VSHARP = MEDI_L1_filt_dipole('filename','RDF_sim_VSHARP.mat','lambda',reg_lam);
-QSM_sim_iSMV = MEDI_L1_filt_dipole('filename','RDF_sim_iSMV.mat','lambda',reg_lam);
-QSM_sim_LBV = MEDI_L1_orig_dipole('filename','RDF_sim_LBV.mat','lambda',reg_lam);
-QSM_sim_msmv =  MEDI_L1_filt_dipole('filename','RDF_sim_msmv.mat','lambda',reg_lam);
-QSM_sim_smv =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam);
-QSM_sim_nstd = MEDI_L1_filt_dipole('filename', 'RDF_sim_nstd.mat','lambda',reg_lam);
-QSM_ctrl =  MEDI_L1_orig_dipole('filename','RDF_sim.mat','lambda',reg_lam);
-QSM_mPDF = MEDI_L1_orig_dipole('filename','RDF_sim_mPDF.mat','lambda',reg_lam);
+QSM_sim_SHARP = MEDI_L1('filename','RDF_sim_SHARP.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_RESHARP = MEDI_L1('filename','RDF_sim_RESHARP.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_VSHARP = MEDI_L1('filename','RDF_sim_VSHARP.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_iSMV = MEDI_L1('filename','RDF_sim_iSMV.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_LBV = MEDI_L1('filename','RDF_sim_LBV.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_msmv =  MEDI_L1('filename','RDF_sim_msmv.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_smv =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_nstd = MEDI_L1('filename', 'RDF_sim_nstd.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',1);
 %% Compare reconstructions
 true_QSM = load('data\simulation\RDF_sim_gt.mat').true_QSM;
 gray_mask = load('data\simulation\RDF_sim_gt.mat').gray_mask;

@@ -12,11 +12,8 @@ function msmv(in_file,out_file)
     % Load local field
     load(in_file)
     
-    % Initial region-growing parameter
-    rg_param = 0.1;
-
     % Generate kernel
-    SphereK = single(sphere_kernel(matrix_size, voxel_size,5));
+    SphereK = single(sphere_kernel(matrix_size,voxel_size,5));
 
     % Partition mask
     Mask_ne = SMV(Mask,SphereK) > 0.999;
@@ -33,23 +30,14 @@ function msmv(in_file,out_file)
     % Perform initial SMV, then address incorrect values at edge
     RDF_s0 = Mask.*(RDF-SMV(RDF,SphereK));
 
-    % Region grow from max seed point, background field is connected component
-    [P,J] = regionGrowing(abs(RDF_s0),[r c p],rg_param*max(RDF_s0(:)),min(matrix_size(:)).*min(voxel_size(:)));
-    while sum(J(:)) < (1/2)*min(matrix_size)
-        rg_param = 1.1*rg_param;
-        [P,J] = regionGrowing(abs(RDF_s0),[r c p],rg_param*max(abs(RDF_s0(:))),min(matrix_size(:)).*min(voxel_size(:)));
-    end
-
-    % Fit normal distribution to difference in filtered and unfiltered known background field
-    RDF_bk = abs(RDF-RDF_s0).*J;
-    RDF_bk = abs(RDF_bk(abs(J(:))>0));
-    f_bk = fitdist(RDF_bk(:)-mean(RDF_bk(:)),'normal');
-    f_ne = fitdist(RDF_ne(:)-mean(RDF_ne(:)),'normal');
+    % Fit distribution
+    f_e = fitdist(abs(RDF(Mask_e>0)-RDF_s0(Mask_e>0)),'normal');
+    f_ne = fitdist(abs(RDF(Mask_ne>0)-RDF_s0(Mask_ne>0)),'normal');
 
     % Create mask of known background field
-    Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),min(f_bk.sigma.*rg_param,(f_bk.sigma.*(1-rg_param))));
+    Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.sigma);
     disp('Residual background field threshold in radians is:')
-    disp(string(min(f_bk.sigma.*rg_param,(f_bk.sigma.*(1-rg_param)))))
+    disp(f_e.sigma)
     RDF_s = Mask.*(RDF_s0-Mask_bk.*RDF_s0);
     RDF = RDF_s;
     

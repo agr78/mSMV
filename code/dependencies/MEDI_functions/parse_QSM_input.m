@@ -3,9 +3,9 @@
 %   Modified by Tian Liu and Shuai Wang on 2011.03.15
 %   Last modified by Tian Liu on 2013.07.24
 
-function [lam, iFreq, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
+function [lam, iFreq, RDF, N_std, iMag, Mask, matrix_size, voxel_size, ...
     delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ... 
-    Debug_Mode, lam_CSF, Mask_CSF, opts, lam_FM, rho_FM, lam_Downsample] = parse_QSM_input(varargin)
+    Debug_Mode, lam_CSF, Mask_CSF, dip_filt, opts] = parse_QSM_input(varargin)
 
 merit = 1;
 smv = 1;
@@ -14,12 +14,10 @@ radius = 5;
 data_weighting = 1;
 gradient_weighting = 1;
 pad = 0;
-matrix_size0 = 0;
 Debug_Mode = 'NoDebug';
 % CSF regularization
 lam_CSF = 100;
-lam_FM = 15;
-lam_Downsample = 250;
+
 
 opts=struct;
 opts.filename = ['RDF.mat'];
@@ -78,15 +76,9 @@ if size(varargin,2)>0
                 opts.(fn{j}) = varargin{k+1};
             end
         end
-        % added by Ali 12.31.2021
-        if strcmpi(varargin{k},'lambda_FM')
-            lam_FM=varargin{k+1};
-        end
-        if strcmpi(varargin{k},'rho_FM')
-            rho_FM=varargin{k+1};
-        end
-        if strcmpi(varargin{k},'lambda_DS')
-            lam_Downsample=varargin{k+1};
+        % added by Ali 07.22.2022
+        if strcmpi(varargin{k},'dipole_filter')
+            dip_filt=varargin{k+1};
         end
         % AGR
     end
@@ -143,7 +135,6 @@ else
 end
 
 if sum(pad(:))
-    matrix_size0 = matrix_size;
     matrix_size = matrix_size + pad;
     iFreq = padarray(iFreq, pad,'post');
     RDF = padarray(RDF, pad,'post');

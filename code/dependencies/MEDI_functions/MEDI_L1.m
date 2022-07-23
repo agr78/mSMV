@@ -35,12 +35,14 @@
 %   Last modified by Tian Liu on 2014.09.22
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
+%   Last modified by Alexandra Roberts on 2022.04.01 to facilitate mSMV
+%   shadow reudction
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
-[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
+[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, voxel_size, ...
     delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ...
-    Debug_Mode, lam_CSF, Mask_CSF, opts] = parse_QSM_input(varargin{:});
+    Debug_Mode, lam_CSF, Mask_CSF, dip_filt, opts] = parse_QSM_input(varargin{:});
 
 %%%%%%%%%%%%%%% weights definition %%%%%%%%%%%%%%
 
@@ -54,21 +56,18 @@ N_std = N_std.*Mask;
 tempn = single(N_std);
 D=dipole_kernel(matrix_size, voxel_size, B0_dir);
 
-if (smv)
-%     S = SMV_kernel(matrix_size, voxel_size,radius);
-    SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
-    if opts.smv_shrink_mask
-        Mask = SMV(Mask, SphereK)>0.999;
-    end
+if dip_filt == 1
+    disp('Filtering dipole kernel')
+    SphereK = single(sphere_kernel(matrix_size, voxel_size,5));
     D=(1-SphereK).*D;
-    RDF = RDF - SMV(RDF, SphereK);
-    RDF = RDF.*Mask;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
+    disp('Filtering phase error')
+else
 end
+
 Dconv = @(dx) real(ifftn(D.*fftn(dx)));
 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
 opts.wG = gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_size, opts.percentage);
-
 
 % Preconditioning
 if ~isempty(findstr(upper(Debug_Mode),'NOP'))
@@ -85,10 +84,7 @@ if flag_P
         PH=@(x) conj(opts.P).*x;
     end
     opts.wG = bsxfun(@times,opts.wG,Mask);
-%     opts.cg_max_iter = 100;
-%     opts.cg_tol = 0.0001;
-%     opts.max_iter = 10;
-%     opts.tol_norm_ratio = 0.01;
+
 else
     P=@(x) x;
     PH=@(x) x;
@@ -96,10 +92,11 @@ end
 PHP = @(x) PH(P(x));
 
 regs=struct;
-regs.WL1=struct; % do not change
+regs.WL1=struct; 
 for f=fieldnames(opts.regs)'
     regs.(f{:}) = opts.regs.(f{:});
 end
+
 % CSF regularization
 flag_CSF = ~isempty(opts.Mask_CSF);
 if flag_CSF
@@ -130,22 +127,23 @@ end
     function [x, cost_reg_history, cost_data_history] = gaussnewton()
         
         iter=0;
-        x = zeros(matrix_size); %real(ifftn(conj(D).*fftn((abs(opts.m).^2).*RDF)));
+        x = zeros(matrix_size); 
         if (~isempty(findstr(upper(Debug_Mode),'SAVEITER')))
-            store_CG_results(x/(2*pi*delta_TE*CF)*1e6.*Mask);%add by Shuai for save data
+            store_CG_results(x/(2*pi*delta_TE*CF)*1e6.*Mask);
         end
         res_norm_ratio = Inf;
         cost_data_history = zeros(1,opts.max_iter);
         cost_reg_history = zeros(1,opts.max_iter);
         
-        e=0.000001; %a very small number to avoid /0
-%         e = e.*(2*pi*delta_TE*single(CF)/single(1e6))^2;  % Rescale epsilon
-        if flag_P%~isempty(findstr(upper(Debug_Mode),'SCALEEPSP'))
+        % Avoid division by 0
+        e=0.000001; 
+        if flag_P
             fprintf('Epsilon scaled with P\n');
             e = e*PH(P(ones(matrix_size)));
         end
         badpoint = zeros(matrix_size);
         while (res_norm_ratio>opts.tol_norm_ratio)&&(iter<opts.max_iter)
+            
             tic
             iter=iter+1;
             w = W(opts.m, P(x));
@@ -175,6 +173,7 @@ end
             end
             
             if merit
+                disp('MERIT erosion')
                 wres = wres - mean(wres(Mask(:)==1));
                 a = wres(Mask(:)==1);
                 factor = std(abs(a))*6;
@@ -183,35 +182,21 @@ end
                 badpoint(wres>1)=1;
                  N_std(Mask==1) = N_std(Mask==1).*wres(Mask==1).^2;
                 tempn = double(N_std);
-                if (smv)
-                    tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
-                end
+
                 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
                 b0 = B(opts.m, RDF);
             end
             
             fprintf('iter: %d; res_norm_ratio:%8.4f; cost_L2:%8.4f; cost:%8.4f.\n',iter, res_norm_ratio,cost_data_history(iter), cost_reg_history(iter));
             toc
-            
-            
         end
         
-        
-        
-        %convert x to ppm
+        % Convert to ppm
         x = P(x)/(2*pi*delta_TE*CF)*1e6.*Mask;
         
         % Zero reference using CSF
         if flag_CSF
             x = x - mean(x(opts.Mask_CSF));
-        end
-        
-        if (matrix_size0)
-            x = x(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
-            iMag = iMag(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
-            RDF = RDF(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
-            Mask = Mask(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
-            matrix_size = matrix_size0;
         end
         
         resultsfile = store_QSM_results(x, iMag, RDF, Mask,...

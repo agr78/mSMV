@@ -56,14 +56,6 @@ warning('off','all')
     disp('Gray matter fit: r squared and m')
      [cell2mat(gofsg)']
      [cell2mat(slopeg)']
-
-    % Generate LaTEX table
-    input.data = [cell2mat(gofs); cell2mat(slope); cell2mat(gofss); cell2mat(slopes); cell2mat(gofsr); cell2mat(sloper); cell2mat(gofsg); cell2mat(slopeg)];
-    input.transposeTable = 1;
-    input.tableRowLabels = {'R^2_{whole brain}','m_{whole brain}','R^2_{interior brain}','m_{interior brain}','R^2_{ROIs}','m_{ROIs}','R^2_{gray matter}','m_{gray matter}'};
-    input.tableColLabels = {'Control','mPDF','SMV','SHARP','RESHARP','VSHARP','LBV','iSMV','mSMV*'};
-    input.tableLabel = 'Numerical simulation results';
-    latexTable(input)
     
 set(groot,'defaultFigureVisible','on')
 warning('on','all')
