@@ -4,7 +4,7 @@ cd data/simulation
 load('optimal_params.mat')
 cd ..
 cd 'healthy_subjects/control'
-for j = 1:10
+for j = 5%1:10
     file_name = strcat('romeo_RDF_anon_',num2str(j));
     load(file_name)
     cd ..
@@ -58,7 +58,7 @@ for j = 1:10
     QSM_VSHARP = MEDI_L1('filename',vsharp_filename,'lambda',reg_lam,'dipole_filter',1);
     QSM_LBV = MEDI_L1('filename',lbv_filename,'lambda',reg_lam,'dipole_filter',0);
     QSM_msmv =  MEDI_L1('filename',msmv_filename,'lambda',reg_lam,'dipole_filter',1);
-    QSM_smv =  MEDI_L1('filename',file_name,'lambda',reg_lam,'dipole_filter',1);
+    QSM_smv =  MEDI_L1('filename',smv_filename,'lambda',reg_lam,'dipole_filter',1);
     QSM_ctrl =  MEDI_L1('filename',file_name,'lambda',reg_lam,'dipole_filter',0);
     QSM_mpdf =  MEDI_L1('filename',mpdf_filename,'lambda',reg_lam,'dipole_filter',0);
     QSMs = {QSM_ctrl QSM_mpdf QSM_smv QSM_msmv QSM_LBV QSM_VSHARP};
