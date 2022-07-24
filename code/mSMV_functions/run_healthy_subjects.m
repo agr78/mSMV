@@ -4,7 +4,7 @@ cd data/simulation
 load('optimal_params.mat')
 cd ..
 cd 'healthy_subjects/control'
-for j = 5%1:10
+for j = 1:10
     file_name = strcat('romeo_RDF_anon_',num2str(j));
     load(file_name)
     cd ..

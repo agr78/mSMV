@@ -106,8 +106,8 @@ save('data\simulation\RDF_sim_smv.mat','RDF','matrix_size','voxel_size','Mask','
 % QSM reconstruction
 disp('Reconstructing QSM from local fields')
 reg_lam = 100;
-QSM_sim_SHARP = MEDI_L1('filename','RDF_sim_SHARP.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_sim_RESHARP = MEDI_L1('filename','RDF_sim_RESHARP.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_SHARP = MEDI_L1('filename','RDF_sim_SHARP.mat','lambda',reg_lam,'dipole_filter',0);
+QSM_sim_RESHARP = MEDI_L1('filename','RDF_sim_RESHARP.mat','lambda',reg_lam,'dipole_filter',0);
 QSM_sim_VSHARP = MEDI_L1('filename','RDF_sim_VSHARP.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_iSMV = MEDI_L1('filename','RDF_sim_iSMV.mat','lambda',reg_lam,'dipole_filter',0);
 QSM_sim_LBV = MEDI_L1('filename','RDF_sim_LBV.mat','lambda',reg_lam,'dipole_filter',0);
