@@ -109,13 +109,13 @@ reg_lam = 100;
 QSM_sim_SHARP = MEDI_L1('filename','RDF_sim_SHARP.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_RESHARP = MEDI_L1('filename','RDF_sim_RESHARP.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_VSHARP = MEDI_L1('filename','RDF_sim_VSHARP.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_sim_iSMV = MEDI_L1('filename','RDF_sim_iSMV.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_sim_LBV = MEDI_L1('filename','RDF_sim_LBV.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_sim_iSMV = MEDI_L1('filename','RDF_sim_iSMV.mat','lambda',reg_lam,'dipole_filter',0);
+QSM_sim_LBV = MEDI_L1('filename','RDF_sim_LBV.mat','lambda',reg_lam,'dipole_filter',0);
 QSM_sim_msmv =  MEDI_L1('filename','RDF_sim_msmv.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_smv =  MEDI_L1('filename','RDF_sim_smv.mat','lambda',reg_lam,'dipole_filter',1);
 QSM_sim_nstd = MEDI_L1('filename', 'RDF_sim_nstd.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',1);
-QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',1);
+QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',0);
+QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',0);
 %% Compare reconstructions
 true_QSM = load('data\simulation\RDF_sim_gt.mat').true_QSM;
 gray_mask = load('data\simulation\RDF_sim_gt.mat').gray_mask;
