@@ -4,7 +4,7 @@ cd data/simulation
 load('optimal_params.mat')
 cd ..
 cd 'healthy_subjects/control'
-for j = 5%1:10
+for j = 5
     file_name = strcat('romeo_RDF_anon_',num2str(j));
     load(file_name)
     cd ..
@@ -85,7 +85,7 @@ end
 names = {'control','mpdf','smv','msmv','lbv','vsharp'};
 hs = 5;
 for k = 1:min(size(QSMs_ax))
-    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),20,215,210,[384 384],strcat(names{k},string(hs),'.png'))
+    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),20,192,215,[384 384],strcat(names{k},string(hs),'.png'))
     cd ..
     cd ..
 end
@@ -113,20 +113,18 @@ while k < 10
    
     % Use same mask for all brain volumes since it affects gray matter
     % variance
-    ss_c(k) = var(Masks{2}(:).*QSMs{1}(:).*gmm(:))*1000;
-    ss_mpdf(k) = var(Masks{2}(:).*QSMs{2}(:).*gmm(:))*1000;
-    ss_smv(k) = var(Masks{2}(:).*QSMs{3}(:).*gmm(:))*1000;
-    ss_msmv(k) = var(Masks{2}(:).*QSMs{4}(:).*gmm(:))*1000;
-    ss_lbv(k) = var(Masks{2}(:).*QSMs{5}(:).*gmm(:))*1000;
-    ss_vsharp(k) = var(Masks{2}(:).*QSMs{6}(:).*gmm(:))*1000;   
+    ss_c(k) = var(Masks{3}(:).*QSMs{1}(:).*gmm(:))*1000;
+    ss_smv(k) = var(Masks{3}(:).*QSMs{3}(:).*gmm(:))*1000;
+    ss_msmv(k) = var(Masks{3}(:).*QSMs{4}(:).*gmm(:))*1000;
+    ss_lbv(k) = var(Masks{3}(:).*QSMs{5}(:).*gmm(:))*1000;
+    ss_vsharp(k) = var(Masks{3}(:).*QSMs{6}(:).*gmm(:))*1000;   
 
     QSMs_arr = [QSMs_arr; QSMs];
 end
 vis([imrotate(cell2mat(QSMs_arr),-90)],'WindowLevel',[0.5 0])
     % Test significance with Bonferroni correction
-    alpha = 0.005/4; 
+    alpha = 0.0005/4; 
     [h,p] = ttest(ss_c,ss_msmv,"Alpha",alpha)
-    [h,p] = ttest(ss_mpdf,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_smv,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_lbv,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_vsharp,ss_msmv,"Alpha",alpha)

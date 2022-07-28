@@ -113,20 +113,18 @@ while k < 10
    
     % Use same mask for all brain volumes since it affects gray matter
     % variance
-    ss_c(k) = var(Masks{2}(:).*QSMs{1}(:).*gmm(:))*1000;
-    ss_mpdf(k) = var(Masks{2}(:).*QSMs{2}(:).*gmm(:))*1000;
-    ss_smv(k) = var(Masks{2}(:).*QSMs{3}(:).*gmm(:))*1000;
-    ss_msmv(k) = var(Masks{2}(:).*QSMs{4}(:).*gmm(:))*1000;
-    ss_lbv(k) = var(Masks{2}(:).*QSMs{5}(:).*gmm(:))*1000;
-    ss_vsharp(k) = var(Masks{2}(:).*QSMs{6}(:).*gmm(:))*1000;   
+    ss_c(k) = var(Masks{3}(:).*QSMs{1}(:).*gmm(:))*1000;
+    ss_smv(k) = var(Masks{3}(:).*QSMs{3}(:).*gmm(:))*1000;
+    ss_msmv(k) = var(Masks{3}(:).*QSMs{4}(:).*gmm(:))*1000;
+    ss_lbv(k) = var(Masks{3}(:).*QSMs{5}(:).*gmm(:))*1000;
+    ss_vsharp(k) = var(Masks{3}(:).*QSMs{6}(:).*gmm(:))*1000;   
 
     QSMs_arr = [QSMs_arr; QSMs];
 end
 vis([imrotate(cell2mat(QSMs_arr),-90)],'WindowLevel',[0.5 0])
     % Test significance with Bonferroni correction
-    alpha = 0.005/4; 
+    alpha = 0.0005/4; 
     [h,p] = ttest(ss_c,ss_msmv,"Alpha",alpha)
-    [h,p] = ttest(ss_mpdf,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_smv,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_lbv,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_vsharp,ss_msmv,"Alpha",alpha)

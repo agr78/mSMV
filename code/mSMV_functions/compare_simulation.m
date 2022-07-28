@@ -118,7 +118,7 @@ QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',0)
 QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',0);
 %% Compare reconstructions
 true_QSM = load('data\simulation\RDF_sim_gt.mat').true_QSM;
-gray_mask = load('data\simulation\RDF_sim_gt.mat').gray_mask;
+gray_mask = Mask_SMV.*load('data\simulation\RDF_sim_gt.mat').gray_mask;
 roi_mask = load('sim_roi_mask.mat').roi_mask;
 QSMs = {Mask_c.*QSM_ctrl 
         Mask_c.*QSM_mPDF

@@ -9,7 +9,6 @@
 % 03/31/2022
 
 function msmv(in_file,out_file)
-
     % Load local field
     load(in_file)
     
@@ -30,7 +29,6 @@ function msmv(in_file,out_file)
     if Mask_e(r,c,p)>0
         disp('Maximum principle verified')
     end
-
     % Perform initial SMV, then address incorrect values at edge
     RDF_s0 = Mask.*(RDF-SMV(RDF,SphereK));
     RDF_s0k = RDF_s0;
@@ -40,26 +38,19 @@ function msmv(in_file,out_file)
     f_ne = fitdist(abs(RDF(Mask_ne>0)-RDF_s0(Mask_ne>0)),'normal');
 
     % Vessel filter
-    filt = abs(RDF-SMV(RDF,matrix_size,voxel_size,1));
-    Mask_ves = imbinarize(filt,std(filt(:))); % Should this be abs? Causing brightness? Yes, adding abs() fixes this
-    
+    filt = RDF-SMV(RDF,matrix_size,voxel_size,1);
+    Mask_ves = imbinarize(filt,std(filt(:))); % Should this be abs? Causing brightness?
     % Create mask of known background field
     Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.mu+f_e.sigma);
   
-    % Preserve the vessels that extend to the edge
     Mask_bk = Mask_bk == 1 & Mask_ves == 0;
-
-    % Establish threshold
     disp('Residual background field threshold in radians is:')
     disp(f_e.mu+f_e.sigma)
+    RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),-3*f_ne.sigma-f_ne.mu,f_ne.sigma+f_ne.mu,"InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",min(RDF_s0(Mask_bk == 1)));
 
-    % Rescale background field values to known local field values
-    RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),-2*f_ne.sigma+f_ne.mu,2*f_ne.sigma+f_ne.mu,"InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",min(RDF_s0(Mask_bk == 1)));
     disp('Rescaling residual background field to:')
-    disp('+/-'); disp(2*f_ne.sigma+f_ne.mu)
+    disp('+/-'); disp(f_ne.sigma+f_ne.mu)
     RDF_s = RDF_s0;
-
-    % Prepare for reconstruction
     RDF = RDF_s;
     
 save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag', 'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
