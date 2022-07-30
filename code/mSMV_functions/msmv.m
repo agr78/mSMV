@@ -42,7 +42,7 @@ function msmv(in_file,out_file)
     % Create mask of known background field
     Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.mu+f_e.sigma);
     
-    if ~contains('sim',in_file)
+    if ~contains(in_file,'sim')
         % Vessel filter
         filt = abs(RDF-SMV(RDF,matrix_size,voxel_size,1));
         Mask_ves = imbinarize(filt,std(filt(:))); 

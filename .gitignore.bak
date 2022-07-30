@@ -1,8 +1,4 @@
-data/simulation/
-data/cosmos/
-data/healthy_subjects/
-data/hemo/
-data/phantom/
+data/
 figures/healthy_subjects/archive/
 figures/hemo/
 results/

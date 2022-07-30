@@ -72,7 +72,7 @@ save('optimal_params','alpha_SHARP','alpha_RESHARP','peel')
 cd ..
 cd ..
 
-set(groot,'defaultFigureVisible','off')
+set(groot,'defaultFigureVisible','on')
 
 % Process local fields
 RDF_SHARP = Mask_SHARPs{idxmax_SHARP}.*RDF_SHARPs{idxmax_SHARP};
