@@ -8,7 +8,7 @@
 % Cornell University
 % 03/31/2022
 
-function out_stats = QSM_stats(true_QSM,QSMs,Masks,gray_mask,roi_mask,matrix_size,voxel_size)
+function out_stats = QSM_stats(true_QSM,QSMs,Masks,gray_mask,vein_mask,roi_mask,matrix_size,voxel_size)
 set(groot,'defaultFigureVisible','off')
 warning('off','all')
     Mask = Masks{1};
@@ -56,6 +56,17 @@ warning('off','all')
     disp('Gray matter fit: r squared and m')
      [cell2mat(gofsg)']
      [cell2mat(slopeg)']
+
+    for j = 1:length(QSMs)
+    [fitresg,gofg] = createFit(vein_mask(:).*true_QSM(:),vein_mask(:).*QSMs{j}(:)); 
+    slopeg{j} = fitresg.p1;
+    gofsg{j} = gofg.rsquare;
+    end
+    disp('Vein fit: r squared and m')
+     [cell2mat(gofsg)']
+     [cell2mat(slopeg)']
+
+    
     
 set(groot,'defaultFigureVisible','on')
 warning('on','all')

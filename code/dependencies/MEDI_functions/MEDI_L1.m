@@ -68,11 +68,7 @@ end
 Dconv = @(dx) real(ifftn(D.*fftn(dx)));
 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
 opts.wG = gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_size, opts.percentage);
-K = sphere_kernel(matrix_size,voxel_size,radius);
-v = real(ifftn(fftn(Mask).*K));
-     f = (1./v);
-     f(isinf(f)) = 0;
-%opts.m = f.*opts.m;
+
 % Preconditioning
 if ~isempty(findstr(upper(Debug_Mode),'NOP'))
     opts.P = 1;

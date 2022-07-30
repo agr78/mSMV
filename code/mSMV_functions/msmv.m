@@ -39,15 +39,18 @@ function msmv(in_file,out_file)
     f_e = fitdist(abs(RDF(Mask_e>0)-RDF_s0(Mask_e>0)),'normal');
     f_ne = fitdist(abs(RDF(Mask_ne>0)-RDF_s0(Mask_ne>0)),'normal');
 
-    % Vessel filter
-    filt = abs(RDF-SMV(RDF,matrix_size,voxel_size,1));
-    Mask_ves = imbinarize(filt,std(filt(:))); % Should this be abs? Causing brightness? Yes, adding abs() fixes this
-    
     % Create mask of known background field
     Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.mu+f_e.sigma);
-  
-    % Preserve the vessels that extend to the edge
-    Mask_bk = Mask_bk == 1 & Mask_ves == 0;
+    
+    if ~contains('sim',in_file)
+        % Vessel filter
+        filt = abs(RDF-SMV(RDF,matrix_size,voxel_size,1));
+        Mask_ves = imbinarize(filt,std(filt(:))); 
+        
+        % Preserve the vessels that extend to the edge
+        Mask_bk = Mask_bk == 1 & Mask_ves == 0;
+        disp('Applying vessel mask')
+    end
 
     % Establish threshold
     disp('Residual background field threshold in radians is:')

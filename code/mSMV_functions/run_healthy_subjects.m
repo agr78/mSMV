@@ -130,14 +130,14 @@ vis([imrotate(cell2mat(QSMs_arr),-90)],'WindowLevel',[0.5 0])
     [h,p] = ttest(ss_vsharp,ss_msmv,"Alpha",alpha)
 
     
-    method = categorical({'PDF','mPDF','SMV','LBV','VSHARP','mSMV'});
-    method = reordercats(categorical({'PDF','mPDF','VSHARP','LBV','SMV','mSMV'}));
+    method = categorical({'PDF','SMV','LBV','VSHARP','mSMV'});
+    method = reordercats(categorical({'PDF','VSHARP','LBV','SMV','mSMV'}));
 
-    boxplot([ss_c(:),ss_mpdf(:),ss_vsharp(:),ss_lbv(:),ss_smv(:),ss_msmv(:)],method,'grouporder',{'PDF','mPDF','VSHARP','LBV','SMV','mSMV'})
-    sigstar({[1,6]},[0.005],0)
-    sigstar({[2,6]},[0.005],0)
-    sigstar({[3,6]},[0.005],0)
-    sigstar({[4,6]},[0.005],0)
+    boxplot([ss_c(:),ss_vsharp(:),ss_lbv(:),ss_smv(:),ss_msmv(:)],method,'grouporder',{'PDF','VSHARP','LBV','SMV','mSMV'})
+    sigstar({[1,5]},[0.005],0)
+    sigstar({[2,5]},[0.005],0)
+    sigstar({[3,5]},[0.005],0)
+    sigstar({[4,5]},[0.005],0)
 
     xlabel('Algorithm')
     ylabel('\sigma^2_{gray matter}')
