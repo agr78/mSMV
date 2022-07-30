@@ -14,6 +14,7 @@ clc
 save_opt = 1;
 
 % Load true RDF for parameter optimization
+set(groot,'defaultFigureVisible','off')
 RDF_t = load('data\simulation\RDF_sim_gt.mat').RDF;
 
 % Use local field for fair comparison to mSMV
@@ -71,6 +72,8 @@ save('optimal_params','alpha_SHARP','alpha_RESHARP','peel')
 cd ..
 cd ..
 
+set(groot,'defaultFigureVisible','on')
+
 % Process local fields
 RDF_SHARP = Mask_SHARPs{idxmax_SHARP}.*RDF_SHARPs{idxmax_SHARP};
 RDF_RESHARP = Mask_RESHARPs{idxmax_RESHARP}.*RDF_RESHARPs{idxmax_RESHARP};
@@ -117,10 +120,10 @@ QSM_sim_nstd = MEDI_L1('filename', 'RDF_sim_nstd.mat','lambda',reg_lam,'dipole_f
 QSM_ctrl =  MEDI_L1('filename','RDF_sim.mat','lambda',reg_lam,'dipole_filter',0);
 QSM_mPDF = MEDI_L1('filename','RDF_sim_mPDF.mat','lambda',reg_lam,'dipole_filter',0);
 %% Compare reconstructions
-true_QSM = load('data\simulation\RDF_sim_gt.mat').true_QSM;
+sss = load_nii('sagittal_sinus.nii');
+true_QSM = load('data\simulation\RDF_sim_gt.mat').true_QSM+0.4*double(sss.img);
 gray_mask = Mask_SMV.*load('data\simulation\RDF_sim_gt.mat').gray_mask;
 roi_mask = load('sim_roi_mask.mat').roi_mask;
-sinus_mask = load(sss)
 QSMs = {Mask_c.*QSM_ctrl 
         Mask_c.*QSM_mPDF
         Mask_SMV.*QSM_sim_smv 
@@ -132,7 +135,7 @@ QSMs = {Mask_c.*QSM_ctrl
         Mask_iSMV.*QSM_sim_iSMV 
         Mask_c.*QSM_sim_msmv};
 Masks = {Mask_c Mask_c Mask_SMV Mask_c Mask_SHARPs{idxmax_SHARP} Mask_RESHARPs{idxmax_RESHARP} Mask_VSHARP Mask_LBV{idxmin_LBV} Mask_iSMV Mask_c};
-QSM_stats(true_QSM,QSMs,Masks,gray_mask,roi_mask,matrix_size,voxel_size)
+QSM_stats(true_QSM,QSMs,Masks,gray_mask,double(sss.img),roi_mask,matrix_size,voxel_size)
 
 % Save
 if save_opt == 1;

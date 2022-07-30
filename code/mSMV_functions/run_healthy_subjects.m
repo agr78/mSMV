@@ -83,9 +83,9 @@ end
 
 %%
 names = {'control','mpdf','smv','msmv','lbv','vsharp'};
-hs = 10;
+hs = 9;
 for k = 1:min(size(QSMs_ax))
-    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),23,215,210,[384 384],strcat(names{k},string(hs),'.png'))
+    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),28,192,215,[384 384],strcat(names{k},string(hs),'.png'))
     cd ..
     cd ..
 end
