@@ -156,6 +156,7 @@ for j = 1:length(QSM_figs)
     make_figures(QSM_figs{j},Masks{j},voxel_size','figures\simulation\tifs',ax1,sag,cor,[matrix_size(1) matrix_size(2)],names{j})
     cd ..
     cd ..
+    cd ..
 end
 
 
