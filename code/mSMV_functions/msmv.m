@@ -37,7 +37,8 @@ function msmv(in_file,out_file)
 
     % Fit distribution
     f_e = fitdist(abs(RDF(Mask_e>0)-RDF_s0(Mask_e>0)),'normal');
-    f_ne = fitdist(abs(RDF(Mask_ne>0)-RDF_s0(Mask_ne>0)),'normal');
+    %f_ne = fitdist(abs(RDF(Mask_ne>0)-RDF_s0(Mask_ne>0)),'normal');
+    f_ne = fitdist(RDF_s0(Mask_ne>0),'normal');
 
     % Create mask of known background field
     Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.mu+f_e.sigma);
@@ -57,9 +58,10 @@ function msmv(in_file,out_file)
     disp(f_e.mu+f_e.sigma)
 
     % Rescale background field values to known local field values
-    RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),-2*f_ne.sigma+f_ne.mu,2*f_ne.sigma+f_ne.mu,"InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",min(RDF_s0(Mask_bk == 1)));
-    disp('Rescaling residual background field to:')
-    disp('+/-'); disp(2*f_ne.sigma+f_ne.mu)
+    %RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),-2*f_ne.sigma+f_ne.mu,2*f_ne.sigma+f_ne.mu,"InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",min(RDF_s0(Mask_bk == 1)));
+    RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),-f_ne.sigma+f_ne.mu,f_ne.sigma+f_ne.mu,"InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",min(RDF_s0(Mask_bk == 1)));
+    disp('Rescaling residual background field to:') 
+    disp('+/-'); disp(f_ne.sigma+f_ne.mu)
     RDF_s = RDF_s0;
 
     % Prepare for reconstruction

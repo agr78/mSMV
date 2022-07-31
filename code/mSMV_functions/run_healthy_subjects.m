@@ -80,12 +80,16 @@ for j = 1:10
         QSMs_sag{k,j}= sag_view(QSMs_ax{k,j},Masks_ax{k,j},voxel_size);
     end
 end
-
+cd ..
+cd ..
+cd ..
 %%
+
 names = {'control','mpdf','smv','msmv','lbv','vsharp'};
-hs = 10;
+hs = 5;
 for k = 1:min(size(QSMs_ax))
-    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\'),23,215,198,[384 384],strcat(names{k},string(hs),'.png'))
+    make_figures(QSMs_ax{k,hs},Masks_ax{k,hs},voxel_size,strcat('figures\healthy_subjects\tifs'),20,192,215,[384 384],strcat(names{k},string(hs),'.png'))
+    cd ..
     cd ..
     cd ..
 end
@@ -121,9 +125,11 @@ while k < 10
 
     QSMs_arr = [QSMs_arr; QSMs];
 end
-vis([imrotate(cell2mat(QSMs_arr),-90)],'WindowLevel',[0.5 0])
+
     % Test significance with Bonferroni correction
-    alpha = 0.0005/4; 
+    alpha = 0.00025;
+    N = 4;
+    alpha = alpha/4;
     [h,p] = ttest(ss_c,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_smv,ss_msmv,"Alpha",alpha)
     [h,p] = ttest(ss_lbv,ss_msmv,"Alpha",alpha)

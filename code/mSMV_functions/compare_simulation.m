@@ -153,7 +153,7 @@ for j = 1:length(QSM_figs)
     cor = 94;
     sag = 138;
     names = {'gt','ctrl','mpdf','smv','nstd','sharp','resharp','vsharp','lbv','ismv','msmv'};
-    make_figures(QSM_figs{j},Masks{j},voxel_size','figures\simulation',ax1,sag,cor,[matrix_size(1) matrix_size(2)],names{j})
+    make_figures(QSM_figs{j},Masks{j},voxel_size','figures\simulation\tifs',ax1,sag,cor,[matrix_size(1) matrix_size(2)],names{j})
     cd ..
     cd ..
 end
