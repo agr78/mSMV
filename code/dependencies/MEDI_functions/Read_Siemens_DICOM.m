@@ -1,4 +1,4 @@
-function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_Siemens_DICOM(DicomFolder)
+function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,B0_mag,files]=Read_Siemens_DICOM(DicomFolder)
 
 filelist = dir(DicomFolder);
 i=1;
@@ -22,7 +22,7 @@ NumEcho = single(info.EchoTrainLength);
 voxel_size(1,1) = single(info.PixelSpacing(1));
 voxel_size(2,1) = single(info.PixelSpacing(2));
 voxel_size(3,1) = single(info.SliceThickness);
-
+B0_mag = info.MagneticFieldStrength;
 CF = info.ImagingFrequency *1e6;
 isz=[matrix_size(1) matrix_size(2) matrix_size(3)*NumEcho];
 iPhase = single(zeros(isz));

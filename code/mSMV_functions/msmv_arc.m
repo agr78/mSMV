@@ -80,7 +80,7 @@ function msmv(in_file,out_file)
 %             RDF = RDF_s;
 %     else
          % Create mask of known background field
-         Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_bk.mu/mink(matrix_size)+f_bk.sigma/min(matrix_size));
+         Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_bk.mu/min(matrix_size)+f_bk.sigma/min(matrix_size));
          disp((f_bk.mu+f_bk.sigma))
          disp(f_ne)
          RDF_s = Mask.*(RDF_s0-Mask_bk.*RDF_s0);

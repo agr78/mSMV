@@ -58,7 +58,7 @@ D=dipole_kernel(matrix_size, voxel_size, B0_dir);
 
 if dip_filt == 1
     disp('Filtering dipole kernel')
-    SphereK = single(sphere_kernel(matrix_size, voxel_size,5));
+    SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
     D=(1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
     disp('Filtering phase error')
@@ -68,9 +68,10 @@ end
 Dconv = @(dx) real(ifftn(D.*fftn(dx)));
 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
 opts.wG = gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_size, opts.percentage);
+opts.lam_CSF = lam_CSF;
 
 % Preconditioning
-if ~isempty(findstr(upper(Debug_Mode),'NOP'))
+if ~isempty(findstr(upper(Debug_Mode),'NOP'));
     opts.P = 1;
 end
 flag_P = isstruct(opts.P) || (isnumeric(opts.P) && (numel(opts.P) ~= 1));

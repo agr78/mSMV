@@ -14,60 +14,53 @@ function msmv(in_file,out_file)
     load(in_file)
     
     % Generate kernel
-    SphereK = single(sphere_kernel(matrix_size,voxel_size,5));
+    radius = 5;
+    r2 = radius./10;
+    SphereK = single(sphere_kernel(matrix_size,voxel_size,radius));
 
     % Partition mask
-    Mask_ne = SMV(Mask,SphereK) > 0.999;
-    Mask_e = Mask-Mask_ne;
-    
-    % Partition field
-    RDF_ne = Mask_ne.*(RDF); 
-    RDF_e = Mask_e.*(RDF); 
-
-    % Find max, on edge via Green's theorem
-    [maxval,idxmax] = max(abs(RDF(:)));
-    [r,c,p] = ind2sub(size(RDF),idxmax);  
-    if Mask_e(r,c,p)>0
-        disp('Maximum principle verified')
-    end
+    Mne = SMV(Mask,SphereK) > 0.999;
+    Me = Mask-Mne;
 
     % Perform initial SMV, then address incorrect values at edge
-    RDF_s0 = Mask.*(RDF-SMV(RDF,SphereK));
-    RDF_s0k = RDF_s0;
+    RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
+    RDF_s0 = RDF_s;
 
-    % Fit distribution
-    f_e = fitdist(abs(RDF(Mask_e>0)-RDF_s0(Mask_e>0)),'normal');
-    f_ne = fitdist(RDF_s0(Mask_ne>0),'normal');
+    % Calculate threshold using the maximum corollary and kernel limit
+    t = kernel_lim(RDF,voxel_size,matrix_size,Mask);
+    Mask_ev = Mask-MaskErode(Mask,matrix_size,voxel_size,radius+1);
 
     % Create mask of known background field
-    Mask_bk = imbinarize(abs(Mask_e.*RDF_s0),f_e.mu+f_e.sigma);
-    
-    if ~contains(in_file,'sim')
-        % Vessel filter
-        filt = abs(RDF-SMV(RDF,matrix_size,voxel_size,1));
-        Mask_ves = imbinarize(filt,std(filt(:))); 
-        
-        % Preserve the vessels that extend to the edge
-        Mask_bk = Mask_bk == 1 & Mask_ves == 0;
-        disp('Applying vessel mask')
+    Mb = imbinarize(abs(Me.*RDF_s0),t);
+    if exist('R2s','var') == 1
+        vr = 5*max(voxel_size(:));
+        % Impose minimum vessel radius (Larson et. al)
+        vr = max(15,vr); % 10 for hs data
+        Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vr],'ObjectPolarity','bright'),0);
+        Mb = Mb == 1 & Mv == 0;
+    else
+        Mv = zeros(size(Mb));
     end
 
-    % Establish threshold
-    disp('Residual background field threshold in radians is:')
-    disp(f_e.mu+f_e.sigma)
-
-    % Rescale background field values to known local field values
-    RDF_s0(Mask_bk == 1) = rescale(RDF_s0(Mask_bk == 1),...
-        -f_ne.sigma+f_ne.mu,f_ne.sigma+f_ne.mu,...
-        "InputMax",max(RDF_s0(Mask_bk == 1)),"InputMin",...
-        min(RDF_s0(Mask_bk == 1)));
-    disp('Rescaling residual background field to:') 
-    disp('+/-'); disp(f_ne.sigma+f_ne.mu)
-    RDF_s = RDF_s0;
-
+    % Perform additional filtering on estimated background field
+    k = 1;
+    maxk = 5;
+    while sum(Mb(:))/sum(Mask(:)) > 0.000001 || sum(Mb(:))/sum(Mask(:)) == 0
+        Mb = imbinarize(abs(Me.*RDF_s),t) == 1;
+        Mb = Mb == 1 & Mv == 0;
+        RDF_s = Mask.*(RDF_s-SMV(Mb.*RDF_s,matrix_size,voxel_size,r2));
+        k = k+1;
+        if k > maxk-1
+            break
+        end
+    end
     % Prepare for reconstruction
     RDF = RDF_s;
-    
-save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
-    'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+    if exist('Mask_CSF','var')
+    save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
+        'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+    else
+        save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
+        'Mask', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+
 end

@@ -1,0 +1,13 @@
+data/simulation/
+data/cosmos/
+data/healthy_subjects/
+data/hemo/
+data/phantom/
+figures/healthy_subjects/archive/
+figures/hemo/
+results/
+total field/
+archive/
+data/old_hemo
+figures/mrm/old
+text/MRM_mSMV

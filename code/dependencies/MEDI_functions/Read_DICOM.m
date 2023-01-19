@@ -1,4 +1,8 @@
-function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM(DicomFolder, varargin)
+% Added B0_mag output for CSF referencing
+% Added slice spacing check
+% AGR 12.14.2022
+
+function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,B0_mag,files]=Read_DICOM(DicomFolder, varargin)
 
 manufacturer='';
 if nargin>1
@@ -30,6 +34,9 @@ fnTemp=fullfile(DicomFolder, filelist(1).name);
 
 
 info = dicominfo(fnTemp);
+if isfield(info,'SpacingBetweenSlices')
+    disp('Slice spacing present')
+end    
 if isempty(manufacturer)
     manufacturer = info.Manufacturer;
 end
@@ -47,8 +54,8 @@ files.InstitutionName = institute;
 
 switch lower(manufacturer)
     
-    case {'siemens','siemens healthcare gmbh'}
-        [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_Siemens_DICOM(DicomFolder);
+    case {'siemens','siemens healthcare gmbh','siemens healthineers'}
+        [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,B0_mag,files]=Read_Siemens_DICOM(DicomFolder);
         
         disp('SIEMENS READ');
         
@@ -154,7 +161,7 @@ switch lower(manufacturer)
         else
             
             
-            [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_GE_DICOM(DicomFolder);
+            [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,B0_mag,files]=Read_GE_DICOM(DicomFolder);
             
             disp('GE READ');
             
@@ -333,7 +340,7 @@ switch lower(manufacturer)
         disp('LOADING FAILED');
         
         
-        
+    
         
         
 end

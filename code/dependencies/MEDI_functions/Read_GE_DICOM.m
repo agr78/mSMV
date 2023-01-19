@@ -21,7 +21,7 @@
 %   Modified by Tian Liu on 2011.05.19
 %   Last modified by Tian Liu on 2013.07.24
 
-function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir, files]=Read_GE_DICOM(DicomFolder)
+function [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,B0_mag, files]=Read_GE_DICOM(DicomFolder)
 
 files=struct;
 filelist = dir(DicomFolder);
@@ -90,6 +90,7 @@ if isfield(info,'Private_0019_107e')
     end
 end
 
+B0_mag = info.MagneticFieldStrength;
 CF = info.ImagingFrequency *1e6;
 isz=[matrix_size(1) matrix_size(2) matrix_size(3)*NumEcho];
 iReal = single(zeros(isz));
