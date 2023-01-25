@@ -119,12 +119,9 @@ while k < 11
     k = k+1;
 end
 
-    % Test significance with Bonferroni correction
     alpha = 0.001;
-    N = 3;
-    alpha = alpha/N;
-    [h,p] = ttest(ss_c,ss_msmv,"Alpha",alpha)
-    [h,p] = ttest(ss_vsharp,ss_msmv,"Alpha",alpha)
+    [p,h] = signrank(ss_c,ss_msmv,"Alpha",alpha)
+    [p,h] = signrank(ss_vsharp,ss_msmv,"Alpha",alpha)
 
     
     method = categorical({'PDF','VSHARP','mSMV'});
