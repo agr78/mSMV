@@ -64,7 +64,8 @@ switch lower(manufacturer)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PART%%%%%%%%%%%%%%%%%%%%%%%%%%%
     case 'ge medical systems'
         
-        if ~isempty(strfind(lower(institute), 'tongji')) || ~isempty(strfind(lower(institute), 'zju')) || ~isempty(strfind(lower(institute), 'aff2'))
+        if ~isempty(strfind(lower(institute), 'tongji')) || ~isempty(strfind(lower(institute), 'zju')) || ~isempty(strfind(lower(institute), 'aff2'))...
+                || ~isempty(strfind(lower(institute), 'xuanwu hospital cmu'))
             warning('Please checking dicom intensity to phase conversion');
             %                 if ~isempty(strfind(lower(institute), 'mw02'))
             %                     phase_scale = @(info) 4096;
@@ -155,7 +156,7 @@ switch lower(manufacturer)
                 delta_TE = TE(2) - TE(1);
             end
             
-            
+            B0_mag = CF/(42.5e6);
             disp('GE READ other');
             
         else

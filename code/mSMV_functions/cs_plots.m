@@ -39,18 +39,17 @@ b5.FaceColor = 'flat';
 b5.CData(1,:) = blue;
 b5.CData(2,:) = red;
 b5.CData(3,:) = yellow;
-title('Clinical scoring')
-ylabel('Score')
+ylabel('Clinical score','Interpreter','Latex','FontSize',18)
 ax = gca;
 ax.XTick = [2 6 10 14 18];
 ax.XTickLabel = {string(method(1)) string(method(2)) string(method(3)) string(method(4)) string(method(5))};
-groups = {[2,3],[1,3],[6,7],[5,7],[10,11],[13,15],[17,19]};
-sigstar(groups,[0.005,0.005,0.005,0.005,0.05,0.005,0.005])
+groups = {[2,3],[1,3],[6,7],[5,7],[9,11],[10,11],[13,15],[17,19]};
+sigstar(groups,[0.005,0.005,0.005,0.005,0.005,0.05,0.005,0.005])
 h = zeros(3, 1);
 h(1) = bar(NaN,NaN,'FaceColor', blue);
 h(2) = bar(NaN,NaN,'FaceColor',red);
 h(3) = bar(NaN,NaN,'FaceColor',yellow);
-legend(h, 'PDF','SMV','mSMV');
+legend(h, 'PDF+MEDI','PDF+MEDI-SMV','PDF+MEDI-mSMV');
 hold off
 
 

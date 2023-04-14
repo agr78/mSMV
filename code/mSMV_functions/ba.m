@@ -1,20 +1,19 @@
-function ba(a,mSMV,alg_strings,yscale,dm)
+function ba(a,mSMV,alg_strings,yscale,xu,dm)
 
-    figure;
     x = (a(:)+mSMV(:))./2;
     y = a(:)-mSMV(:);
     scatter(x,y)
     chi_b = mean(y(:));
-    title(strcat(alg_strings,' agreement'))
-    xlabel(['$\frac{\chi_{mSMV}+\chi_0}{2}$ (ppb)'],'Interpreter','LaTeX','FontSize',14)
-    ylabel('$\chi_{mSMV} - \chi_0$ (ppb)','Interpreter','LaTeX','FontSize',14)
+    title(strcat(alg_strings,' agreement'),'Interpreter','LaTeX','FontSize',18)
+    xlabel(['$\frac{\chi_{mSMV}+\chi_0}{2}$ (ppb)'],'Interpreter','LaTeX','FontSize',18)
+    ylabel('$\chi_{mSMV} - \chi_0$ (ppb)','Interpreter','LaTeX','FontSize',18)
     hold on
     sigma = std(y(:));
-    plot(x,chi_b+1.96*sigma.*ones(size(x)),'k')
+    plot(-xu:xu,chi_b+1.96*sigma.*ones(size(-xu:xu)),'k')
     hold on
-    plot(x,chi_b-1.96*sigma.*ones(size(x)),'k')
+    plot(-xu:xu,chi_b-1.96*sigma.*ones(size(-xu:xu)),'k')
     hold on
-    plot(x,chi_b.*ones(size(x)),'k')
+    plot(-xu:xu,chi_b.*ones(size(-xu:xu)),'k')
     grid on
     box on
     utxt = {strcat('\mu + 1.96\sigma =',{' '},string(chi_b+1.96*sigma))};

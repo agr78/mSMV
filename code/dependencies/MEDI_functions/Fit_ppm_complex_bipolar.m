@@ -225,7 +225,9 @@ fprintf('\n');
 w=pi;
 p1(p1>w)=mod(p1(p1>w)+w,2*w)-w;
 p1(p1<-w)=mod(p1(p1<-w)+w,2*w)-w;
-p1=reshape(p1,s0(1:L_s0-1));
+if nargout <= 2
+    p1=reshape(p1,s0(1:L_s0-1));
+end
 
 % error propagation
 dp1=sqrt(ai33);
@@ -244,6 +246,7 @@ if nargout>2
         if nargout>4
             p0_o2e=reshape(p0_o2e,s0(1:L_s0-1));
         end
+        p1=reshape(p1,s0(1:L_s0-1));
     end
 end
 

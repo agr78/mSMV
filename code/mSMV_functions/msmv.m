@@ -35,7 +35,7 @@ function msmv(in_file,out_file)
     if exist('R2s','var') == 1
         vr = 5*max(voxel_size(:));
         % Impose minimum vessel radius (Larson et. al)
-        vr = max(15,vr); % 10 for hs data
+        vr = max(15,vr); 
         Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vr],'ObjectPolarity','bright'),0);
         Mb = Mb == 1 & Mv == 0;
     else

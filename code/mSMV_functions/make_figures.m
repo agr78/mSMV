@@ -6,11 +6,11 @@
 % Cornell University
 % 04/02/2022
 
-function make_figures(QSM,Mask,voxel_size,file_path,axn,corn,sagn,out_size,im_type,C)
+function make_figures(QSM,Mask,voxel_size,file_path,axn,corn,sagn,out_size,im_type)
 
-    cr = @(X)X(C:end-C,C:end-C,:);
+    %cr = @(X)X(C:end-C,C:end-C,:);
     %cr = @(X)permute(cr(X.*Mask),[2 1 3 4]); 
-    cr = @(X)(cr(X.*Mask)); 
+    cr = @(X)((X.*Mask)); 
     ax_QSM = cr(QSM);
     ax_size = size(ax_QSM);
 

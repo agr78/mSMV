@@ -32,6 +32,7 @@ for k = 1:n
 end
 mns = mns*1000;
 f1 = figure(1);
+set(gca,'FontSize',28)
 subplot(1,2,1)
 [fitres,gof] = createFit(mns(2,:,:),mns(3,:,:));
 title('Healthy subjects $\chi_{ROI}$ fit','Interpreter','LaTeX','FontSize',18)
@@ -47,9 +48,10 @@ xu = 170;
 y = smv_q(:)-msmv_q(:);
 scatter(x,y)
 chi_b = mean(y(:));
+%title('SMV agreement','Interpreter','LaTeX','FontSize',18)
 title('SMV agreement','Interpreter','LaTeX','FontSize',18)
-xlabel(['$\frac{\chi_{mSMV}+\chi_{SMV}}{2}$ (ppb)'],'Interpreter','LaTeX','FontSize',14)
-ylabel('$\chi_{mSMV} - \chi_{SMV}$ (ppb)','Interpreter','LaTeX','FontSize',14)
+xlabel(['$\frac{\chi_{mSMV}+\chi_{SMV}}{2}$ (ppb)'],'Interpreter','LaTeX','FontSize',18)
+ylabel('$\chi_{mSMV} - \chi_{SMV}$ (ppb)','Interpreter','LaTeX','FontSize',18)
 hold on
 sigma = std(y(:));
 plot(0:xu,chi_b+1.96*sigma.*ones(size(0:xu)),'k')
@@ -66,6 +68,7 @@ text(120,(ceil(chi_b-1.96*sigma)-2),ltxt)
 xlim([0,xu])
 ylim([-100 100])
 hold off
+
 %%
 clear x y
 PDF = mns(1,:,:);

@@ -2,13 +2,15 @@ data/simulation/
 data/cosmos/
 data/healthy_subjects/
 data/hemo/
+data/old_hemo
 data/phantom/
-figures/healthy_subjects/archive/
-figures/hemo/
+data/resfit
+data/results
+data/clinical_scoring
 results/
 total field/
 archive/
-data/old_hemo
-figures/mrm/old
+figures/
 text/MRM_mSMV
 text/
+code/mSMV_functions/archive
