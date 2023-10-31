@@ -8,7 +8,7 @@
 % Cornell University
 % 03/31/2022
 
-function out_stats = QSM_ROI_stats(true_QSM,QSMs,Masks,roi_mask,matrix_size,voxel_size)
+function out_stats = QSM_ROI_stats(true_QSM,QSMs,roi_mask,matrix_size,voxel_size)
 set(groot,'defaultFigureVisible','off')
 warning('off','all')
 

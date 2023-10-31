@@ -8,14 +8,19 @@
 % Cornell University
 % 03/31/2022
 
-function msmv(in_file,out_file)
-
+function msmv(in_file,out_file,pf)
+   
     % Load local field
     load(in_file)
     
     % Generate kernel
     radius = 5;
     r2 = radius./10;
+    % Make sure all datasets use minimum radius kernel.
+    if min(voxel_size(:))>=1
+        r2 = min(voxel_size(:))/2+0.05;
+        r2
+    end
     SphereK = single(sphere_kernel(matrix_size,voxel_size,radius));
 
     % Partition mask
@@ -23,11 +28,22 @@ function msmv(in_file,out_file)
     Me = Mask-Mne;
 
     % Perform initial SMV, then address incorrect values at edge
-    RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
+    if nargin == 2
+        RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
+
+    else 
+        RDF_s = RDF;
+
+    end
     RDF_s0 = RDF_s;
 
-    % Calculate threshold using the maximum corollary and kernel limit
-    t = kernel_lim(RDF,voxel_size,matrix_size,Mask);
+    % Check if minimum threshold should be scaled
+    if exist('B0_mag','var') == 1
+        t = kernel_lim(RDF,voxel_size,matrix_size,Mask,B0_mag);
+    else
+        % Calculate threshold using the maximum corollary and kernel limit
+        t = kernel_lim(RDF,voxel_size,matrix_size,Mask);
+    end
     Mask_ev = Mask-MaskErode(Mask,matrix_size,voxel_size,radius+1);
 
     % Create mask of known background field

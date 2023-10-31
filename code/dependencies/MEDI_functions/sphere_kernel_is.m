@@ -20,6 +20,7 @@ function y = sphere_kernel(matrix_size,voxel_size, radius)
                  -matrix_size(1)/2:matrix_size(1)/2-1,...
                  -matrix_size(3)/2:matrix_size(3)/2-1);
 
+% Symmetrical field of view (FOV) in mm
 X = X*voxel_size(1);
 Y = Y*voxel_size(2);
 Z = Z*voxel_size(3);
@@ -34,7 +35,9 @@ Sphere_in = (  (abs(X)+0.5*voxel_size(1)).^2 ...
             
 Sphere_mid = zeros(matrix_size);
 
-split = 10; %such that error is controlled at <1/(2*10)
+% Split determines the minimum radius size in mm
+% Default is 10, such that error is controlled at <1/(2*10)
+split = 10; 
 [X_v Y_v Z_v] = meshgrid(-split+0.5:split-0.5, -split+0.5:split-0.5, -split+0.5:split-0.5);
 X_v = X_v/(2*split);
 Y_v = Y_v/(2*split);
@@ -46,6 +49,7 @@ Y = Y(shell==1);
 Z = Z(shell==1);
 shell_val = zeros(size(X));
 
+% Calculate shell value on an interpolated grid
 for i = 1:length(X)
     xx = X(i);
     yy = Y(i);

@@ -24,7 +24,7 @@
 % last modified by Jianwu 2014.9.3
 % last modified by Jianwu, add voxel_size when computing the gradient
 
-function [wwater wfat wfreq wunwph_uf unwphw N_std ] = spurs_gc(iField,TE,CF,voxel_size,SUBSAMPLE,dfat)
+function [wwater wfat wfreq wunwph_uf unwphw N_std ] = spurs_gc(iField,TE,CF,voxel_size,SUBSAMPLE,dfat,polarity)
 if nargin<5
     SUBSAMPLE = 1;
 end
@@ -33,12 +33,15 @@ energy = [];
 iField0 = iField;
 [sx sy sz necho] = size(iField);
 
-if abs((TE(2)-TE(1))-(TE(3)-TE(2)))< 0.0002
-    [iFreq_raw N_std] = Fit_ppm_complex(iField);
+if polarity == 0
+    if abs((TE(2)-TE(1))-(TE(3)-TE(2)))< 0.0002
+        [iFreq_raw N_std] = Fit_ppm_complex(iField);
+    else
+        [iFreq_raw N_std] = Fit_ppm_complex_TE(iField,TE);
+    end
 else
-    [iFreq_raw N_std] = Fit_ppm_complex_TE(iField,TE);
+    [iFreq_raw,N_std] = Fit_ppm_complex_bipolar(iField);
 end
-
 iFreq_raw(isnan(iFreq_raw))=0;
 iFreq_raw(isinf(iFreq_raw))=0;
 iFreq_raw0 = iFreq_raw(:,:,:);

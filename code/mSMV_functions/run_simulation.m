@@ -34,7 +34,7 @@ SNR = 50;
 delta_TE = 2.6e-3;
 B0_dir = [ 0 0 1];  
 matrix_size = [size(true_QSM,1) size(true_QSM,2) size(true_QSM,3)];
-voxel_size = [.9375 .9375 1.5];
+voxel_size = [0.9375 0.9375 1.5];
 CF = 127e6;
 numecho = 11;
 TE = [1:numecho]*delta_TE;
@@ -77,4 +77,5 @@ save(strcat(filename),'RDF','iFreq','iFreq_raw','iMag','N_std','Mask',...
 % [RDF_250,shim_250] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,250);
 % [RDF_500,shim_500] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,500);
 % [RDF_1000,shim_1000] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,1000);
-
+save('sim_RDF_1000.mat','RDF','iFreq','iFreq_raw','iMag','N_std','Mask',...
+    'matrix_size','voxel_size', 'delta_TE', 'CF','B0_dir','Mask_CSF','gray_mask','true_QSM','R2s','iField','-v7.3');

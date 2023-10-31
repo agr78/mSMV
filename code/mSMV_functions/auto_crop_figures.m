@@ -52,9 +52,9 @@ function auto_crop_figures(QSM,Mask,voxel_size,file_path,axn,corn,sagn,out_size,
     imname_cor = lower(strcat(im_type,'_',num2str(sagn),'_','sag','.tif'));
 
     [I,J] = find(ax_Mask_slice,1,'first')
-    imwrite(imresize(uint8(255*(im_ax(round(J/4):end-round(J/4),round(J/4):end-round(J/4)))),out_size), imname_ax);
+    imwrite((uint8(255*(im_ax(round(J/4):end-round(J/4),round(J/4):end-round(J/4))))), imname_ax);
     [I,J] = find(sag_Mask_slice,1,'first')
-    imwrite(imresize(uint8(255*(im_sag(round(J/4):end-round(J/4),round(J/4):end-round(J/4)))),out_size), imname_sag);
+    imwrite((uint8(255*(im_sag(round(J/4):end-round(J/4),round(J/4):end-round(J/4))))), imname_sag);
     [I,J] = find(cor_Mask_slice,1,'first')
-    imwrite(imresize(uint8(255*(im_cor(round(J/4):end-round(J/4),round(J/4):end-round(J/4)))),out_size), imname_cor);
+    imwrite((uint8(255*(im_cor(round(J/4):end-round(J/4),round(J/4):end-round(J/4))))), imname_cor);
 end

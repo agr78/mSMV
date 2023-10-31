@@ -1,4 +1,4 @@
-function xi = xi_calc(CF,delta_TE,tmin)
+function xi = xi_calc(delta_TE,tmin)
 
-    xi = tmin./(CF.*delta_TE.*2*pi);
+    xi = tmin./(delta_TE.*2*pi);
 end
