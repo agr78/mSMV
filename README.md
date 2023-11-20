@@ -14,5 +14,5 @@ Clone the repository with
 All necessary toolboxes are included in `mSMV/code/dependencies`. If these toolboxes are already installed, `mSMV/code/mSMV_functions` can be added to the MATLAB path.
 
 ## Publications
-If this code is used, please cite the following:
+If this code is used, please cite the following: \\
 [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
