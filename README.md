@@ -20,7 +20,7 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 `pf` Optional disabling of the prefilter step (typically used with [`SHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/SHARP.html), [`RESHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/RESHARP.html), [`VSHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/VSHARP_STISuite.html), etc.)
 
 ## Prerequisites
-All necessary toolboxes are included in `mSMV/code/dependencies`. If these toolboxes are already installed, `mSMV/code/mSMV_functions` can be added to the MATLAB path.
+All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path.
 
 ## Publications
 If this code is used, please cite the following: \
