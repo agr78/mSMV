@@ -10,5 +10,8 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 Clone the repository with
 `git clone https://github.com/agr78/mSMV.git`
 
+## Prerequisites
+All necessary toolboxes are included in `mSMV/code/dependencies`. If these toolboxes are already installed, `mSMV/code/mSMV_functions` can be added to the MATLAB path.
+
 ## Publications
 [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
