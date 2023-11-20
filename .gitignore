@@ -4,9 +4,9 @@ data/healthy_subjects/
 data/hemo/
 data/old_hemo
 data/phantom/
-data/resfit
-data/results
-data/clinical_scoring
+data/resfit/
+data/results/
+data/clinical_scoring/
 results/
 total field/
 archive/
