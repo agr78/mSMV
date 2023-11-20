@@ -11,7 +11,7 @@ Clone the repository with
 `git clone https://github.com/agr78/mSMV.git`
 
 ## Function arguments
-For ease of use with the MEDI Toolbox (included in `mSMV/code/dependencies/MEDI_functions/`), the function `mSMV` accepts the following arguments: \
+For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/MEDI_toolbox) (included in `mSMV/code/dependencies/MEDI_functions/`), the function `mSMV` accepts the following arguments: \
 `in_file` Input file containing the field map after background field removal (by PDF, VSHARP, LBV, etc.) \
 `out_file` Output file containing mSMV-filtered field map \
 `radius` Prefilter radius (default 5mm) \
