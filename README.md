@@ -7,6 +7,7 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 </p>
 
 ## Installation
+Clone the repository with
 `git clone https://github.com/agr78/mSMV.git`
 
 ## Publications
