@@ -12,7 +12,7 @@ Clone the repository with
 
 ## Function arguments
 For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/MEDI_toolbox) (included in `mSMV/code/dependencies/MEDI_functions/`), the function `mSMV` accepts the following arguments: \
-`in_file` Input file containing the field map after background field removal (by PDF, VSHARP, LBV, etc.) \
+`in_file` Input file containing the field map after background field removal (by [`PDF`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/PDF.html), [`VSHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/VSHARP_STISuite.html), [`LBV`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/LBV.html), etc.) \
 `out_file` Output file containing mSMV-filtered field map \
 `radius` Prefilter radius (default 5mm) \
 `maxk` Maximum number of iterations with minimum kernel radius (default 5) \
