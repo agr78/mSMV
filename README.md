@@ -17,7 +17,7 @@ For ease of use with the MEDI Toolbox (included in `mSMV/code/dependencies/MEDI_
 `radius` Prefilter radius (default 5mm) \
 `maxk` Maximum number of iterations with minimum kernel radius (default 5) \
 `vr` Frangi filter vessel radius, see MATLAB's [`fibermetric()`](https://www.mathworks.com/help/images/ref/fibermetric.html) function for further details \
-`pf` Optional disabling of the prefilter step (typically used with SHARP, RESHARP, VSHARP, etc.) \
+`pf` Optional disabling of the prefilter step (typically used with SHARP, RESHARP, VSHARP, etc.)
 
 ## Prerequisites
 All necessary toolboxes are included in `mSMV/code/dependencies`. If these toolboxes are already installed, `mSMV/code/mSMV_functions` can be added to the MATLAB path.
