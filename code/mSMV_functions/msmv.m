@@ -72,11 +72,17 @@ function msmv(in_file,out_file,pf)
     end
     % Prepare for reconstruction
     RDF = RDF_s;
-    if exist('Mask_CSF','var')
-    save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
-        'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
-    else
+    if exist('Mask_CSF','var') && exist('iFreq','var') && exist('Freq_raw','var')
         save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
+        'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+    elseif exist('iFreq','var')
+        save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
+        'Mask', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+    elseif exist('Mask_CSF','var')
+        save(out_file,'B0_dir','CF','delta_TE','iMag','Mask_CSF',...
+        'Mask', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
+    else
+        save(out_file,'B0_dir','CF','delta_TE','iMag',...
         'Mask', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
 
 end

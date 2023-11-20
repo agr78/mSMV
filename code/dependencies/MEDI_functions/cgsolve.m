@@ -44,7 +44,7 @@ implicit = isa(A,'function_handle');
 if (nargin < 6)
     r = b;
 else
-    if (implicit), r = b - A(reshape(x,matrix_size)); r=r(:);  else, r = b - A*x;  end
+    if (implicit), r = b -reshape(A(reshape(x,matrix_size)),[prod(matrix_size(:)),1]); r=r(:);  else, r = b - A*x;  end
 end
 d = r;
 delta = r'*r;

@@ -36,7 +36,7 @@
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
 %   Last modified by Alexandra Roberts on 2022.04.01 to facilitate mSMV
-%   shadow reudction
+%   shadow reduction
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
