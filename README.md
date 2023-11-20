@@ -16,7 +16,7 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 `out_file` Output file containing [`mSMV`](#mSMV) filtered field map \
 `radius` Prefilter radius (default 5mm) \
 `maxk` Maximum number of iterations with minimum kernel radius (default 5) \
-`vr` Frangi filter vessel radius, see MATLAB's [`fibermetric()`](https://www.mathworks.com/help/images/ref/fibermetric.html) function for further details \
+`vr` Frangi filter vessel radius, see MATLAB's [`fibermetric`](https://www.mathworks.com/help/images/ref/fibermetric.html) function for further details \
 `pf` Optional disabling of the prefilter step (typically used with [`SHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/SHARP.html), [`RESHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/RESHARP.html), [`VSHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/VSHARP_STISuite.html), etc.)
 
 ## Prerequisites
@@ -26,8 +26,8 @@ All necessary toolboxes are included in `mSMV/code/dependencies/`. If these tool
 The `run_simulation.m` file can be used to generate the numerical phantom from the [`paper`](https://arxiv.org/abs/2304.11476).
 
 ## Notes
-The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped.
-
+The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped. \
+The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB mex file compiled on Windows 10. On different operating systems, `unwrapPhase` will be used.
 ## Publications
 If this code is used, please cite the following: \
 [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
