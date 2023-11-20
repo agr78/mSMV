@@ -8,19 +8,27 @@
 % Cornell University
 % 03/31/2022
 
-function msmv(in_file,out_file,pf)
+function msmv(in_file,out_file,radius,maxk,vr,pf)
    
     % Load local field
     load(in_file)
     
-    % Generate kernel
-    radius = 5;
-    r2 = radius./10;
-    % Make sure all datasets use minimum radius kernel.
-    if min(voxel_size(:))>=1
-        r2 = min(voxel_size(:))/2+0.05;
-        r2
+    % Generate kernel with default radius of 5 mm
+    if nargin == 2
+        radius = 5;
     end
+    r2 = min(voxel_size(:))/2+0.05;
+
+    % Default iteration maximum
+    if nargin == 3
+        maxk = 5;
+    end
+
+    % Default vessel size parameter
+    if nargin == 4
+        vr = 5*max(voxel_size(:));
+    end
+  
     SphereK = single(sphere_kernel(matrix_size,voxel_size,radius));
 
     % Partition mask
@@ -28,9 +36,9 @@ function msmv(in_file,out_file,pf)
     Me = Mask-Mne;
 
     % Perform initial SMV, then address incorrect values at edge
-    if nargin == 2
+    if nargin == 5
         RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
-
+    % Skip pre-filtering
     else 
         RDF_s = RDF;
 
@@ -49,7 +57,6 @@ function msmv(in_file,out_file,pf)
     % Create mask of known background field
     Mb = imbinarize(abs(Me.*RDF_s0),t);
     if exist('R2s','var') == 1
-        vr = 5*max(voxel_size(:));
         % Impose minimum vessel radius (Larson et. al)
         vr = max(15,vr); 
         Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vr],'ObjectPolarity','bright'),0);
@@ -60,7 +67,6 @@ function msmv(in_file,out_file,pf)
 
     % Perform additional filtering on estimated background field
     k = 1;
-    maxk = 5;
     while sum(Mb(:))/sum(Mask(:)) > 0.000001 || sum(Mb(:))/sum(Mask(:)) == 0
         Mb = imbinarize(abs(Me.*RDF_s),t) == 1;
         Mb = Mb == 1 & Mv == 0;
