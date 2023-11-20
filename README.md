@@ -6,6 +6,8 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 <img width="500" src=https://github.com/agr78/mSMV/assets/69256818/3d619d71-2fae-48cc-b7ad-8bdd4d78024f>
 </p>
 
+## Installation
+`git clone https://github.com/agr78/mSMV.git`
 
 ## Publications
 [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
