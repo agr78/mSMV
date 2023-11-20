@@ -7,7 +7,7 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 </p>
 
 ## Installation
-Clone the repository with
+Clone the repository with:
 `git clone https://github.com/agr78/mSMV.git`
 
 ## Function arguments
@@ -21,6 +21,12 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 
 ## Prerequisites
 All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path.
+
+## Examples
+The `run_simulation.m` file can be used to generate the numerical phantom from the [`paper`](https://arxiv.org/abs/2304.11476).
+
+## Notes
+The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped.
 
 ## Publications
 If this code is used, please cite the following: \
