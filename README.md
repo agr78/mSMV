@@ -26,7 +26,7 @@ The `run_simulation.m` file can be used to generate the numerical phantom from t
 
 ## Notes
 The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped. \
-The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase` will be used.
+The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase.m` will be used.
 
 ## Publications
 If this code is used, please cite the following: \
