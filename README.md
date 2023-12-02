@@ -22,7 +22,7 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path.
 
 ## Examples
-The `run_simulation.m` file can be used to generate the numerical phantom from the [`paper`](https://arxiv.org/abs/2304.11476).
+The `run_simulation.m` file can be used to generate the numerical phantom from the [paper](https://arxiv.org/abs/2304.11476).
 
 ## Notes
 The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped. \
@@ -30,6 +30,7 @@ The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian
 
 ## Publications
 If this code is used, please cite the following: \
+Magnetic Resonance in Medicine Article: A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963 \
 [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
 
 ## Contact
