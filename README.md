@@ -30,9 +30,9 @@ The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian
 
 ## Publications
 If this code is used, please cite the following:
-> Magnetic Resonance in Medicine Article: A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963 \
+> Magnetic Resonance in Medicine Article: A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 > 
-> [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476.
+> [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476
 
 ## Contact
 Please direct questions to [Alexandra Roberts](https://github.com/agr78) at agr78@cornell.edu.
