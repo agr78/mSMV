@@ -14,18 +14,18 @@ function msmv(in_file,out_file,radius,maxk,vr,pf)
     load(in_file)
     
     % Generate kernel with default radius of 5 mm
-    if nargin == 2
+    if nargin <= 2
         radius = 5;
     end
     r2 = min(voxel_size(:))/2+0.05;
 
     % Default iteration maximum
-    if nargin == 3
+    if nargin <= 3
         maxk = 5;
     end
 
     % Default vessel size parameter
-    if nargin == 4
+    if nargin <= 4
         vr = 5*max(voxel_size(:));
     end
   
