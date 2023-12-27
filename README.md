@@ -22,8 +22,10 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path.
 
 ## Examples
-If you have an existing installation of `MEDI`, pull the `msmv` branch and modify the QSM reconstruction as follows: \
-```QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');```
+If you have an existing installation of `MEDI`, pull the `msmv` branch and modify the QSM reconstruction as follows:
+```
+QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
+```
 The `run_simulation.m` file can be used to generate the numerical phantom from the [paper](https://arxiv.org/abs/2304.11476).
 
 ## Notes
