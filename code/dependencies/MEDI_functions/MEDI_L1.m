@@ -35,14 +35,13 @@
 %   Last modified by Tian Liu on 2014.09.22
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
-%   Last modified by Alexandra Roberts on 2022.04.01 to facilitate mSMV
-%   shadow reudction
+%   Last modified by Alexandra Roberts on 2022.04.01 add mSMV
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
-[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, voxel_size, ...
-    delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ...
-    Debug_Mode, lam_CSF, Mask_CSF, dip_filt, opts] = parse_QSM_input(varargin{:});
+[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
+    delta_TE, CF, B0_dir, merit, smv_flag, msmv_flag, radius, data_weighting, gradient_weighting, ...
+    Debug_Mode, lam_CSF, Mask_CSF, opts] = parse_QSM_input(varargin{:});
 
 %%%%%%%%%%%%%%% weights definition %%%%%%%%%%%%%%
 
@@ -54,15 +53,24 @@ opts.B0_dir = B0_dir;
 
 N_std = N_std.*Mask;
 tempn = single(N_std);
-D=dipole_kernel(matrix_size, voxel_size, B0_dir);
+D = dipole_kernel(matrix_size, voxel_size, B0_dir);
 
-if dip_filt == 1
-    disp('Filtering dipole kernel with kernel size:')
-    radius
+if smv_flag == 1 || msmv_flag == 1
     SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
-    D=(1-SphereK).*D;
+    if smv_flag == 1
+        disp('Eroding mask')
+        Mask = SMV(Mask, SphereK)>0.999;
+        RDF = Mask.*(RDF - SMV(RDF, SphereK));
+    end
+    if msmv_flag == 1
+        if ~exist('R2s','var')
+            RDF = msmv(RDF,Mask,opts.R2s,voxel_size);
+        else
+            disp('R2* map missing in filename argument - skipping mSMV')
+        end
+    end
+    D = (1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
-    disp('Filtering phase error')
 else
 end
 
