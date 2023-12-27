@@ -1,0 +1,62 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2021b
+startdir = C:/Users/agr78/mSMV/code/mSMV_functions
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2021b\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2021b\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2021b\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2021b\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "C:\Users\agr78\mSMV\code\mSMV_functions\codegen\mex\msmv" -I "C:\Users\agr78\mSMV\code\mSMV_functions" -I "C:\Program Files\MATLAB\R2021b\extern\include" -I "C:\Users\agr78\mSMV\code\mSMV_functions\codegen\mex\msmv\interface" -I "." -DMODEL=msmv_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "C:\Users\agr78\mSMV\code\mSMV_functions\codegen\mex\msmv" -I "C:\Users\agr78\mSMV\code\mSMV_functions" -I "C:\Program Files\MATLAB\R2021b\extern\include" -I "C:\Users\agr78\mSMV\code\mSMV_functions\codegen\mex\msmv\interface" -I "." -DMODEL=msmv_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2021b\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "msmv_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil  "$matlabdir\extern\lib\win64\mingw64\libmwimfilter.lib" -Wl,--version-script,msmv_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/msmv_data.o : cc $root/msmv_data.c
+build $builddir/rt_nonfinite.o : cc $root/rt_nonfinite.c
+build $builddir/msmv_initialize.o : cc $root/msmv_initialize.c
+build $builddir/msmv_terminate.o : cc $root/msmv_terminate.c
+build $builddir/sphere_kernel.o : cc $root/sphere_kernel.c
+build $builddir/fftn.o : cc $root/fftn.c
+build $builddir/ifftn.o : cc $root/ifftn.c
+build $builddir/kernel_lim.o : cc $root/kernel_lim.c
+build $builddir/SMV.o : cc $root/SMV.c
+build $builddir/imgradient3.o : cc $root/imgradient3.c
+build $builddir/imgradientxyz.o : cc $root/imgradientxyz.c
+build $builddir/imfilter.o : cc $root/imfilter.c
+build $builddir/_coder_msmv_api.o : cc $root/interface/_coder_msmv_api.c
+build $builddir/_coder_msmv_mex.o : cc $root/interface/_coder_msmv_mex.c
+build $builddir/sumMatrixIncludeNaN.o : cc $root/sumMatrixIncludeNaN.c
+build $builddir/eml_int_forloop_overflow_check.o : cc $root/eml_int_forloop_overflow_check.c
+build $builddir/msmv.o : cc $root/msmv.c
+build $builddir/fftshift.o : cc $root/fftshift.c
+build $builddir/msmv_emxutil.o : cc $root/msmv_emxutil.c
+build $builddir/_coder_msmv_info.o : cc $root/interface/_coder_msmv_info.c
+build $builddir/c_mexapi_version.o : cc $matlabdir/extern/version/c_mexapi_version.c
+
+# Link
+build $root\msmv_mex.mexw64 : link $builddir/msmv_data.o $builddir/rt_nonfinite.o $builddir/msmv_initialize.o $builddir/msmv_terminate.o $builddir/sphere_kernel.o $builddir/fftn.o $builddir/ifftn.o $builddir/kernel_lim.o $builddir/SMV.o $builddir/imgradient3.o $builddir/imgradientxyz.o $builddir/imfilter.o $builddir/_coder_msmv_api.o $builddir/_coder_msmv_mex.o $builddir/sumMatrixIncludeNaN.o $builddir/eml_int_forloop_overflow_check.o $builddir/msmv.o $builddir/fftshift.o $builddir/msmv_emxutil.o $builddir/_coder_msmv_info.o $builddir/c_mexapi_version.o 
