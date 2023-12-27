@@ -57,7 +57,8 @@ tempn = single(N_std);
 D=dipole_kernel(matrix_size, voxel_size, B0_dir);
 
 if dip_filt == 1
-    disp('Filtering dipole kernel')
+    disp('Filtering dipole kernel with kernel size:')
+    radius
     SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
     D=(1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);

@@ -8,24 +8,24 @@
 % Cornell University
 % 03/31/2022
 
-function msmv(in_file,out_file,radius,maxk,vr,pf)
+function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,maxk,vr,pf)
    
-    % Load local field
-    load(in_file)
+    % Get matrix dimensions
+    matrix_size = size(RDF);
     
     % Generate kernel with default radius of 5 mm
-    if nargin == 2
+    if nargin <= 4
         radius = 5;
     end
     r2 = min(voxel_size(:))/2+0.05;
 
     % Default iteration maximum
-    if nargin == 3
+    if nargin <= 5
         maxk = 5;
     end
 
     % Default vessel size parameter
-    if nargin == 4
+    if nargin <= 6
         vr = 5*max(voxel_size(:));
     end
   
@@ -36,11 +36,12 @@ function msmv(in_file,out_file,radius,maxk,vr,pf)
     Me = Mask-Mne;
 
     % Perform initial SMV, then address incorrect values at edge
-    if nargin == 5
+    if nargin <= 7
         RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
     % Skip pre-filtering
     else 
         RDF_s = RDF;
+        disp('Skipping initial SMV filtering')
 
     end
     RDF_s0 = RDF_s;
@@ -56,14 +57,12 @@ function msmv(in_file,out_file,radius,maxk,vr,pf)
 
     % Create mask of known background field
     Mb = imbinarize(abs(Me.*RDF_s0),t);
-    if exist('R2s','var') == 1
-        % Impose minimum vessel radius (Larson et. al)
-        vr = max(15,vr); 
-        Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vr],'ObjectPolarity','bright'),0);
-        Mb = Mb == 1 & Mv == 0;
-    else
-        Mv = zeros(size(Mb));
-    end
+
+    % Impose minimum vessel radius (Larson et. al)
+    vr = max(15,vr); 
+    Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vr],'ObjectPolarity','bright'),0);
+    Mb = Mb == 1 & Mv == 0;
+
 
     % Perform additional filtering on estimated background field
     k = 1;
@@ -78,11 +77,5 @@ function msmv(in_file,out_file,radius,maxk,vr,pf)
     end
     % Prepare for reconstruction
     RDF = RDF_s;
-    if exist('Mask_CSF','var')
-    save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
-        'Mask', 'Mask_CSF', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
-    else
-        save(out_file,'B0_dir','CF','delta_TE','iFreq', 'iFreq_raw', 'iMag',...
-        'Mask', 'matrix_size', 'N_std', 'RDF', 'voxel_size');
 
 end
