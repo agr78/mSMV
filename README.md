@@ -4,7 +4,7 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 <p align="center">
 <img width="500" src=https://github.com/agr78/mSMV/assets/69256818/3d619d71-2fae-48cc-b7ad-8bdd4d78024f>
 </p>
-Residual background field is a major source of shadow artifacts in QSM. The `mSMV` algorithm filters large field magnitude values near the border, where the extreme values of the harmonic background field are located. Further details can be found in <a href="publications.html" onclick="window.open('publications.html', '_self');">Publications</a>.
+Residual background field is a major source of shadow artifacts in QSM. The `mSMV` algorithm filters large field magnitude values near the border, where the extreme values of the harmonic background field are located. Further details can be found in <a href="#publications" onclick="window.open('#publications', '_self');">Publications</a>.
 
 ## Installation
 Clone the repository with:
@@ -13,7 +13,7 @@ Clone the repository with:
 ## Function arguments
 For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/MEDI_toolbox) (included in `mSMV/code/dependencies/MEDI_functions/`), the function `mSMV` accepts the following arguments: \
 `in_file` Input file containing the field map after background field removal (by [`PDF`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/PDF.html), [`VSHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/VSHARP_STISuite.html), [`LBV`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/LBV.html), etc.) \
-`out_file` Output file containing [`mSMV`](maximum-spherical-mean-value-for-shadow-reduction-(mSMV)) filtered field map \
+`out_file` Output file containing <a href="#msmv" onclick="window.open('#msmv', '_self');">`mSMV`</a> filtered field map \
 `radius` Prefilter radius (default 5mm) \
 `maxk` Maximum number of iterations with minimum kernel radius (default 5) \
 `vr` Frangi filter vessel radius, see MATLAB's [`fibermetric`](https://www.mathworks.com/help/images/ref/fibermetric.html) function for further details \
