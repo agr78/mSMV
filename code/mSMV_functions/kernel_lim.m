@@ -3,44 +3,36 @@
 % Approximates the limit of the maximum field value as the kernel radius
 % approaches zero
 %
-% Alexandra G. Roberts
-% MRI Lab
-% Cornell University
-% 11/09/2022
+% Inputs:
+% RDF - Relative difference field (tissue or local field)
+% voxel_size - Resolution used to calculate the minimum kernel radius
+% matrix_size - Image dimensions
+% Mask - Region of interest
+% B0_mag - Field strength
+%
+% Output: Filtered RDF
+%
+% Please cite:
+% A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) 
+% Filtering for Whole Brain Quantitative Susceptibility Mapping," 
+% Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 
 function t = kernel_lim(RDF,voxel_size,matrix_size,Mask,B0_mag)
-
+% Default field strength of 3T
+if nargin < 5
+    B0_mag = 3;
+end
+% Kernel limit parameters
 kvox_min = 0.5;
 K = kvox_min.*min(voxel_size);
 eta = 1e-3;
 t = 0.001;
-k = 1;
-if nargin == 5
-    while t < (0.01*B0_mag/3)
-        [RDF_u] = SMV(RDF,matrix_size,voxel_size,K);
-        RDF_smv = Mask.*(RDF-SMV(RDF,matrix_size,voxel_size,K));
-        [maxval,idx] = max(abs(RDF_smv(:)));
-        uvals(k) = RDF_u(idx);
-        maxvals(k) = maxval;
-        t = maxvals(k);
-        K = K+eta;
-        radii(k) = K;
-        k = k+1;
-    end
-    disp(['New minimum threshold at',string(B0_mag),'T is' string(0.01*B0_mag/3)])
-
-else
-    while t < 0.01
-        [RDF_u] = SMV(RDF,matrix_size,voxel_size,K);
-        RDF_smv = Mask.*(RDF-SMV(RDF,matrix_size,voxel_size,K));
-        [maxval,idx] = max(abs(RDF_smv(:)));
-        uvals(k) = RDF_u(idx);
-        maxvals(k) = maxval;
-        t = maxvals(k);
-        K = K+eta;
-        radii(k) = K;
-        k = k+1;
-    end
+% Approach from 0 (for speed)
+while t < (0.01*B0_mag/3)
+    [RDF_u] = SMV(RDF,matrix_size,voxel_size,K);
+    RDF_smv = Mask.*(RDF-SMV(RDF,matrix_size,voxel_size,K));
+    [maxval,idx] = max(abs(RDF_smv(:)));
+    t = maxval;
+    K = K+eta;
 end
-
-t
+end
