@@ -4,7 +4,7 @@ Here, an algorithm based on the maximum corollary of Green’s theorem is propos
 <p align="center">
 <img width="500" src=https://github.com/agr78/mSMV/assets/69256818/3d619d71-2fae-48cc-b7ad-8bdd4d78024f>
 </p>
-Residual background field is a major source of shadow artifacts in QSM. The `mSMV` algorithm filters large field magnitude values near the border, where the extreme values of the harmonic background field are located. Further details can be found in <a href="#publications" onclick="window.open('#publications', '_self');">Publications</a>.
+Residual background field is a major source of shadow artifacts in QSM. The algorithm filters large field magnitude values near the border, where the extreme values of the harmonic background field are located. Further details can be found in <a href="#publications" onclick="window.open('#publications', '_self');">Publications</a>.
 
 ## Installation
 Clone the repository with:
