@@ -26,6 +26,8 @@
 %   J. Liu et al. Neuroimage 2012;59(3):2560-8.
 %   T. Liu et al. MRM 2011;66(3):777-83
 %   de Rochefort et al. MRM 2010;63(1):194-206
+%   A. V. Dimov, et al. Journal of Neuroimaging 2022;32(1):141–147
+%   A. G. Roberts et al., MRM 2024;DOI: 10.1002/mrm.29963
 %
 %   Adapted from Ildar Khalidov
 %   Modified by Tian Liu on 2011.02.01
@@ -35,14 +37,13 @@
 %   Last modified by Tian Liu on 2014.09.22
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
-%   Last modified by Alexandra Roberts on 2022.04.01 to facilitate mSMV
-%   shadow reudction
+%   Last modified by Alexandra Roberts on 2022.04.01 add mSMV
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
-[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, voxel_size, ...
+[lambda, ~, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
     delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ...
-    Debug_Mode, lam_CSF, Mask_CSF, dip_filt, opts] = parse_QSM_input(varargin{:});
+    Debug_Mode, lam_CSF, Mask_CSF, opts] = parse_QSM_input(varargin{:});
 
 %%%%%%%%%%%%%%% weights definition %%%%%%%%%%%%%%
 
@@ -54,14 +55,20 @@ opts.B0_dir = B0_dir;
 
 N_std = N_std.*Mask;
 tempn = single(N_std);
-D=dipole_kernel(matrix_size, voxel_size, B0_dir);
+D = dipole_kernel(matrix_size, voxel_size, B0_dir);
 
-if dip_filt == 1
-    disp('Filtering dipole kernel')
+if smv == 1
     SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
-    D=(1-SphereK).*D;
+    if opts.smv_shrink_mask && ~opts.msmv
+        disp('Eroding mask')
+        Mask = SMV(Mask, SphereK)>0.999;
+        RDF = Mask.*(RDF - SMV(RDF, SphereK));
+    end   
+    if opts.msmv
+        RDF = msmv(RDF,Mask,opts.R2s,voxel_size);
+    end
+    D = (1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
-    disp('Filtering phase error')
 else
 end
 
@@ -71,7 +78,7 @@ opts.wG = gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_si
 opts.lam_CSF = lam_CSF;
 
 % Preconditioning
-if ~isempty(findstr(upper(Debug_Mode),'NOP'));
+if ~isempty(findstr(upper(Debug_Mode),'NOP'))
     opts.P = 1;
 end
 flag_P = isstruct(opts.P) || (isnumeric(opts.P) && (numel(opts.P) ~= 1));
@@ -93,7 +100,7 @@ end
 PHP = @(x) PH(P(x));
 
 regs=struct;
-regs.WL1=struct; 
+regs.WL1=struct; % Do not change
 for f=fieldnames(opts.regs)'
     regs.(f{:}) = opts.regs.(f{:});
 end
@@ -136,9 +143,9 @@ end
         cost_data_history = zeros(1,opts.max_iter);
         cost_reg_history = zeros(1,opts.max_iter);
         
-        % Avoid division by 0
-        e=0.000001; 
-        if flag_P
+        e=0.000001; % a very small number to avoid /0
+        % e = e.*(2*pi*delta_TE*single(CF)/single(1e6))^2;  % Rescale epsilon
+        if flag_P % ~isempty(findstr(upper(Debug_Mode),'SCALEEPSP'))
             fprintf('Epsilon scaled with P\n');
             e = e*PH(P(ones(matrix_size)));
         end
@@ -174,16 +181,17 @@ end
             end
             
             if merit
-                disp('MERIT erosion')
                 wres = wres - mean(wres(Mask(:)==1));
                 a = wres(Mask(:)==1);
                 factor = std(abs(a))*6;
                 wres = abs(wres)/factor;
                 wres(wres<1) = 1;
                 badpoint(wres>1)=1;
-                 N_std(Mask==1) = N_std(Mask==1).*wres(Mask==1).^2;
+                N_std(Mask==1) = N_std(Mask==1).*wres(Mask==1).^2;
                 tempn = double(N_std);
-
+                if (smv)
+                    tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
+                end
                 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
                 b0 = B(opts.m, RDF);
             end
@@ -199,16 +207,25 @@ end
         if flag_CSF
             x = x - mean(x(opts.Mask_CSF));
         end
+
+        % Padding
+        if (matrix_size0)
+            x = x(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
+            iMag = iMag(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
+            RDF = RDF(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
+            Mask = Mask(1:matrix_size0(1), 1:matrix_size0(2), 1:matrix_size0(3));
+            matrix_size = matrix_size0;
+        end
         
-%         resultsfile = store_QSM_results(x, iMag, RDF, Mask,...
-%             'resultsdir', opts.resultsdir, ...
-%             'Norm', 'L1','Method','MEDIN','Lambda',lambda,...
-%             'SMV',smv,'Radius',radius,'IRLS',merit,...
-%             'voxel_size',voxel_size,'matrix_size',matrix_size,...
-%             'Data_weighting_mode',data_weighting_mode,'Gradient_weighting_mode',gradient_weighting_mode,...
-%             'L1_tol_ratio',opts.tol_norm_ratio, 'Niter',iter,...
-%             'CG_tol',opts.cg_tol,'CG_max_iter',opts.cg_max_iter,...
-%             'B0_dir', B0_dir);
+        resultsfile = store_QSM_results(x, iMag, RDF, Mask,...
+            'resultsdir', opts.resultsdir, ...
+            'Norm', 'L1','Method','MEDIN','Lambda',lambda,...
+            'SMV',smv,'Radius',radius,'IRLS',merit,...
+            'voxel_size',voxel_size,'matrix_size',matrix_size,...
+            'Data_weighting_mode',data_weighting_mode,'Gradient_weighting_mode',gradient_weighting_mode,...
+            'L1_tol_ratio',opts.tol_norm_ratio, 'Niter',iter,...
+            'CG_tol',opts.cg_tol,'CG_max_iter',opts.cg_max_iter,...
+            'B0_dir', B0_dir);
         
     end
 end
