@@ -30,7 +30,7 @@ QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
 If starting from a simple clone of this repository, run:
 ```
 % Import complex field data
-[iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM('SER00001');
+[iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM('DICOM');
 
 % Generate the magnitude image 
 iMag = squeeze(sqrt(sum(abs(iField).^2,4)));
