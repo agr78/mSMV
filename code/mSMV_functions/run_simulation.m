@@ -9,7 +9,8 @@
 % 03/31/2022
 
 clear
-
+addpath(genpath('code\dependencies\'))
+addpath(genpath('data\simulation\'))
 % Load data
 load xS;
 R2s = load('R2s_xS_sim.mat').R2s_xS_sim; 
@@ -77,5 +78,5 @@ save(strcat(filename),'RDF','iFreq','iFreq_raw','iMag','N_std','Mask',...
 % [RDF_250,shim_250] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,250);
 % [RDF_500,shim_500] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,500);
 % [RDF_1000,shim_1000] = PDF(iFreq,N_std,Mask,matrix_size,voxel_size,B0_dir,0,1000);
-save('sim_RDF_1000.mat','RDF','iFreq','iFreq_raw','iMag','N_std','Mask',...
+save('sim_RDF.mat','RDF','iFreq','iFreq_raw','iMag','N_std','Mask',...
     'matrix_size','voxel_size', 'delta_TE', 'CF','B0_dir','Mask_CSF','gray_mask','true_QSM','R2s','iField','-v7.3');

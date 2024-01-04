@@ -56,7 +56,7 @@ RDF = RDF_VSHARP.*Mask_VSHARP;
 Mask = Mask_VSHARP;
 save ('data\simulation\RDF_sim_VSHARP_50.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
 msmv('data\simulation\RDF_sim_50.mat','data\simulation\RDF_sim_msmv_50.mat')
-msmv('data\simulation\RDF_sim_VSHARP_50.mat','data\simulation\RDF_sim_VSHARP_msmv_50.mat')
+msmv('data\simulation\RDF_sim_VSHARP_50.mat','data\simulation\RDF_sim_VSHARP_msmv_50.mat','no_prefilter')
 Mask = Mask_SMV;
 RDF = Mask_SMV.*(RDF_c-SMV(RDF_c,matrix_size,voxel_size,radius));
 save('data\simulation\RDF_sim_smv_50.mat','RDF','matrix_size','voxel_size','Mask','B0_dir','CF','delta_TE','iFreq','iFreq_raw','iMag','Mask_CSF','N_std')
