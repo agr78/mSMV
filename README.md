@@ -63,12 +63,11 @@ save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size...
 % Reconstruct QSM
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv', 5);
 ```
-The `run_simulation.m` file can be used to generate the numerical phantom from the [paper](https://arxiv.org/abs/2304.11476).
 
 ## Notes
-The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped. \
-The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase.m` will be used.
-
+* The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped. \
+* The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase.m` will be used.
+* The `mrm` branch contains code needed to reproduce figures in the [paper](https://arxiv.org/abs/2304.11476).
 
 ## Publications
 If this code is used, please cite the following:
