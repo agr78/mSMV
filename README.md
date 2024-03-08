@@ -48,7 +48,7 @@ iField = iField/noise_level;
 [iFreq_raw,N_std] = Fit_ppm_complex(iField);
 
 % CSF zero-reference
-Mask_CSF = extract_CSF(R2s,Mask,voxel_size);
+Mask_CSF = extract_whole_CSF(R2s,Mask,voxel_size);
 
 % Unwrap phase using ROMEO
 iFreq = romeo(iFreq_raw, iMag, Mask);
