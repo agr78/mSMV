@@ -52,7 +52,7 @@ gradient_weighting_mode = gradient_weighting;
 opts.grad = @fgrad;
 opts.div = @bdiv;
 opts.B0_dir = B0_dir;
-
+bc = 2;
 N_std = N_std.*Mask;
 tempn = single(N_std);
 D = dipole_kernel(matrix_size, voxel_size, B0_dir);
@@ -65,7 +65,9 @@ if smv == 1
         RDF = Mask.*(RDF - SMV(RDF, SphereK));
     end   
     if opts.msmv
-        RDF = msmv(RDF,Mask,opts.R2s,voxel_size);
+        tic; RDF = msmv(RDF,Mask,opts.R2s,voxel_size,radius,opts.tmin); toc;
+        %save RDF_msmv.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE CF B0_dir Mask_CSF R2s;
+%         save('MEDI_RDF.mat','RDF','RDF_pre','Mask','opts','voxel_size'); 
     end
     D = (1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
@@ -74,7 +76,20 @@ end
 
 Dconv = @(dx) real(ifftn(D.*fftn(dx)));
 opts.m = dataterm_mask(data_weighting_mode, tempn, Mask);
-opts.wG = gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_size, opts.percentage);
+if bc == 1
+    disp('Using bias corrected magnitude')
+    Vc = fliplr(flipud(niftiread('./400_MAG_n4bc.nii.gz')));
+    opts.wG = Mask.*gradient_mask(gradient_weighting_mode, double(Vc), Mask, opts.grad, voxel_size, opts.percentage);
+elseif bc == 2
+    disp('Using R2* prior')
+    opts.wG = Mask.*gradient_mask(gradient_weighting_mode, opts.R2s, Mask, opts.grad, voxel_size, opts.percentage);
+elseif bc == 3
+    disp('Using X+ prior')
+    X = load('Xc.mat').Xc;
+    opts.wG = Mask.*gradient_mask(gradient_weighting_mode, X(:,:,:,1), Mask, opts.grad, voxel_size, opts.percentage);
+else
+    opts.wG = Mask.*gradient_mask(gradient_weighting_mode, iMag, Mask, opts.grad, voxel_size, opts.percentage);
+end
 opts.lam_CSF = lam_CSF;
 
 % Preconditioning
