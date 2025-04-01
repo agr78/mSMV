@@ -24,11 +24,11 @@ All necessary toolboxes are included in `mSMV/code/dependencies/`. If these tool
 
 ## Examples
 If an installation of [`MEDI`](https://github.com/pascalspincemaille/MEDI_toolbox) already exists, pull the `msmv` branch and modify the QSM reconstruction as follows:
-```
+```matlab
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
 ```
 If starting from a simple clone of this repository, run:
-```
+```matlab
 % Import complex field data
 [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM('DICOM');
 
@@ -77,6 +77,22 @@ If this code is used, please cite the following:
 > [Magnetic Resonance in Medicine Article](https://onlinelibrary.wiley.com/doi/10.1002/mrm.29963): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 > 
 > [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476
-
+>
+## BibTex
+```bibtex
+@article{Roberts_mSMV_2024,
+   author = {Roberts, Alexandra G. and Romano, Dominick J. and Şişman, Mert and Dimov, Alexey V. and Nguyen, Thanh D. and Kovanlikaya, Ilhami and Gauthier, Susan A. and Wang, Yi and Spincemaille, Pascal},
+   title = {Maximum spherical mean value filtering for whole‐brain QSM},
+   journal = {Magnetic Resonance in Medicine},
+   volume = {91},
+   number = {4},
+   pages = {1586-1597},
+   ISSN = {0740-3194},
+   DOI = {10.1002/mrm.29963},
+   url = {https://dx.doi.org/10.1002/mrm.29963},
+   year = {2024},
+   type = {Journal Article}
+}
+```
 ## Contact
 Please direct questions to [Alexandra Roberts](https://github.com/agr78) at agr78@cornell.edu.
