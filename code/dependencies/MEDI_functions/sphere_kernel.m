@@ -13,6 +13,7 @@
 %   Modified by Tian on 2011.02.01
 %   Modified by Tian on 2011.03.14 The sphere is now rendered.
 %   Last modified by Tian Liu on 2013.07.23
+%   Last modified by Alexandra Roberts 2024.10.16
 
 function y = sphere_kernel(matrix_size,voxel_size, radius)
 
@@ -61,5 +62,6 @@ Sphere_mid(shell==1) = shell_val;
 
 Sphere = Sphere_in+Sphere_mid;    
 Sphere = Sphere/sum(Sphere(:));
-y = fftn(fftshift(Sphere));
+% Since the spherical kernel is a symmetric function
+y = real(fftn(fftshift(Sphere)));
 % y =y.*fftshift(fermi(matrix_size, voxel_size, max(matrix_size(:).*voxel_size(:))/2,max(matrix_size(:).*voxel_size(:))/256*10));
