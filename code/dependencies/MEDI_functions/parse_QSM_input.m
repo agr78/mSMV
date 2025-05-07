@@ -37,6 +37,7 @@ opts.max_iter = 10;
 opts.tol_norm_ratio = 0.1;
 opts.regs = struct;
 opts.smv_shrink_mask = 1;
+opts.tmin = 0.01;
 opts.resultsdir = fullfile(pwd, 'results');
 
 if size(varargin,2)>0
