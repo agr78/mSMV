@@ -92,7 +92,7 @@ if size(varargin,2)>0
     end
 end
 
-load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir');
+load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag');
 opts.matrix_size = matrix_size;
 opts.voxel_size = voxel_size;
 opts.lam_CSF = lam_CSF;
@@ -145,6 +145,30 @@ else
     opts.R2s = [];
 end
 
+% Vessel radius
+if ismember('vessel_radius', who('-file', opts.filename))
+    opts.vessel_radius = getfield(load(opts.filename, 'vessel_radius'), 'vessel_radius');
+else
+    opts.vessel_radius = [];
+end
+% Minimum threshold
+if ismember('tmin', who('-file', opts.filename))
+    opts.tmin = getfield(load(opts.filename, 'tmin'), 'tmin');
+else
+    opts.tmin = [];
+end
+% Number of mSMV iterations
+if ismember('maxk', who('-file', opts.filename))
+    opts.maxk = getfield(load(opts.filename, 'maxk'), 'maxk');
+else
+    opts.maxk = [];
+end
+% Field strength
+if ismember('B0_mag', who('-file', opts.filename))
+    opts.B0_mag = getfield(load(opts.filename, 'B0_mag'), 'B0_mag');
+else
+    opts.B0_mag = [];
+end
 if sum(pad(:))
     matrix_size0 = matrix_size;
     matrix_size = matrix_size + pad;
