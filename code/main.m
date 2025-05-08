@@ -30,11 +30,11 @@ iFreq = unwrapPhase(iMag, iFreq_raw, matrix_size);
 iMagtc = niftiread('mag_t_bc.nii.gz');
 R2s = arlo(TE,iMagtc);
 
-%%%% Adjusted mSMV parameters %%%%
-maxk = 1;
-vessel_radius = 1.5;
-tmin = 0.1;
-B0_mag = 7;
+%%%% mSMV parameters %%%%
+maxk = 5;
+vessel_radius = 15;
+tmin = 0.01;
+B0_mag = 3;
 
 %%%% Dipole inversion %%%%%
 save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size...
