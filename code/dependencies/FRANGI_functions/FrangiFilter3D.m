@@ -75,7 +75,7 @@ end
 % Use single or double for calculations
 if(~isa(I,'double')), I=single(I); end
 
-sigmas=options.FrangiScaleRange(1):options.FrangiScaleRatio:options.FrangiScaleRange(2);
+sigmas=options.FrangiScaleRange(1):options.FrangiScaleRatio:options.FrangiScaleRange(2)
 sigmas = sort(sigmas, 'ascend');
 
 % Frangi filter for all sigmas
@@ -86,7 +86,7 @@ for i = 1:length(sigmas),
     end
     
     % Calculate 3D hessian
-    [Dxx, Dyy, Dzz, Dxy, Dxz, Dyz] = Hessian3D(I,sigmas(i));
+    [Dxx, Dyy, Dzz, Dxy, Dxz, Dyz] = Hessian3D(I,sigmas(i)/6);
 
     if(sigmas(i)>0)
         % Correct for scaling
@@ -126,7 +126,7 @@ for i = 1:length(sigmas),
     expRa = (1-exp(-(Ra.^2./A)));
     expRb =    exp(-(Rb.^2./B));
     expS  = (1-exp(-S.^2./(2*options.FrangiC^2)));
-    keyboard
+%     keyboard
     % Free memory
     clear S A B C Ra Rb
 
