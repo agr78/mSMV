@@ -1,6 +1,6 @@
 ## Maximum Spherical Mean Value for Shadow Reduction (mSMV) <a id="msmv"> 
 ### Whole brain atlas construction
-Reconstruct susceptibility maps for each patient using [`main.m`](https://github.com/agr78/mSMV/blob/atlas/code/main.m), then the atlas can be generated from [`make_atlas.sh`](https://github.com/agr78/mSMV/blob/atlas/code/make_atlas.sh). This produce multi-contrast templates like the one below.
+The multi-contrast atlas can be found in [`template`](https://github.com/agr78/mSMV/blob/atlas/template). To create a new atlas, reconstruct susceptibility maps for each patient using [`main.m`](https://github.com/agr78/mSMV/blob/atlas/code/main.m), and the atlas can be generated from [`make_atlas.sh`](https://github.com/agr78/mSMV/blob/atlas/code/make_atlas.sh). This will produce a multi-contrast template like the one below.
 ![multi-contrast atlas](https://github.com/agr78/mSMV/blob/atlas/figures/ismrm/mc.jpg?raw=true)
 
 ### Whole brain susceptibility
