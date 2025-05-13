@@ -1,6 +1,8 @@
 ## Maximum Spherical Mean Value for Shadow Reduction (mSMV) <a id="msmv"> 
 ### Whole brain atlas construction
-Reconstruct susceptibility maps for each patient using [`main.m`](https://github.com/agr78/mSMV/blob/atlas/code/main.m), then the atlas can then be generated from [`make_atlas.sh`](https://github.com/agr78/mSMV/blob/atlas/code/make_atlas.sh).
+Reconstruct susceptibility maps for each patient using [`main.m`](https://github.com/agr78/mSMV/blob/atlas/code/main.m), then the atlas can then be generated from [`make_atlas.sh`](https://github.com/agr78/mSMV/blob/atlas/code/make_atlas.sh). This produce multi-contrast templates like the one below.
+![multi-contrast atlas](https://github.com/agr78/mSMV/blob/atlas/figures/ismrm/mc.jpg?raw=true)
+
 ### Whole brain susceptibility
 Here, an algorithm based on the maximum corollary of Green’s theorem is proposed to remove shadows in quantitative susceptibility mapping while preserving the edge of the brain. This method is referred to as maximum Spherical Mean Value, or `mSMV`.
 <p align="center">
