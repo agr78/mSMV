@@ -8,7 +8,11 @@
 # A. G. Roberts et al., 
 # "Maximum spherical mean value filtering for whole-brain QSM,", 
 # Magn Reson Med, vol. 91, no. 4, pp. 1586-1597, Apr 2024, doi: 10.1002/mrm.29963.
-#
+# 
+# Tustison NJ et al.,
+# N4ITK: improved N3 bias correction. 
+# IEEE Trans Med Imaging. 2010 Jun;29(6):1310-20. doi: 10.1109/TMI.2010.2046908.
+# 
 # B. B. Avants et al., 
 # "The optimal template effect in hippocampus studies of diseased populations," 
 # NeuroImage, vol. 49, no. 3, pp. 2457-2466, 2010, doi: 10.1016/j.neuroimage.2009.09.062.
