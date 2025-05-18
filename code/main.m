@@ -39,5 +39,4 @@ B0_mag = 3;
 %%%% Dipole inversion %%%%%
 save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size...
      voxel_size delta_TE CF B0_dir Mask_CSF R2s vessel_radius maxk tmin B0_mag;
-%QSM_msmv_10000_new = MEDI_L1r('filename', 'RDF.mat', 'lambda', 10000, 'merit', 'msmv',1);
-QSM_msmv_10000 = MEDI_L1('filename', 'RDF.mat', 'lambda', 10000, 'merit', 'msmv',1);
+QSM_msmv = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv',5);
