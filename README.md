@@ -1,7 +1,7 @@
 ## Maximum Spherical Mean Value for Shadow Reduction (mSMV) <a id="msmv"> 
 ### Contents
 [Whole brain atlas construction](https://github.com/agr78/mSMV/blob/atlas/README.md) <br/>
-[_Ex vivo_ susceptibility](https://github.com/agr78/mSMV/tree/xv) <br/>
+[_Ex vivo_ susceptibility](https://github.com/agr78/mSMV/blob/xv/README.md) <br/>
 <a href="#summary" onclick="window.open('#summary', '_self');">Whole brain susceptibility</a>
 ## Summary 
 Here, an algorithm based on the maximum corollary of Green’s theorem is proposed to remove shadows in quantitative susceptibility mapping while preserving the edge of the brain. This method is referred to as maximum Spherical Mean Value, or `mSMV`.
