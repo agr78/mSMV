@@ -28,11 +28,11 @@ All necessary toolboxes are included in `mSMV/code/dependencies/`. If these tool
 
 ## Examples
 If an installation of [`MEDI`](https://github.com/pascalspincemaille/MEDI_toolbox) already exists, pull the `msmv` branch and modify the QSM reconstruction as follows:
-```
+```matlab
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
 ```
 If starting from a simple clone of this repository, run:
-```
+```matlab
 % Import complex field data
 [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM('DICOM');
 
