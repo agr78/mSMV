@@ -1,5 +1,9 @@
 ## Maximum Spherical Mean Value for Shadow Reduction (mSMV) <a id="msmv"> 
-
+### Contents
+[Whole brain atlas construction](https://github.com/agr78/mSMV/tree/atlas) <br/>
+[_Ex vivo_ susceptibility](https://github.com/agr78/mSMV/tree/xv) <br/>
+<a href="#summary" onclick="window.open('#summary', '_self');">Whole brain susceptibility</a>
+### Summary 
 Here, an algorithm based on the maximum corollary of Green’s theorem is proposed to remove shadows in quantitative susceptibility mapping while preserving the edge of the brain. This method is referred to as maximum Spherical Mean Value, or `mSMV`.
 <p align="center">
 <img width="500" src=https://github.com/agr78/mSMV/assets/69256818/3d619d71-2fae-48cc-b7ad-8bdd4d78024f>
@@ -20,15 +24,15 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 `pf` Optional disabling of the prefilter step (typically used with [`SHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/SHARP.html), [`RESHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/RESHARP.html), [`VSHARP`](https://sepia-documentation.readthedocs.io/en/latest/method/bfr/VSHARP_STISuite.html), etc.)
 
 ## Prerequisites
-All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path.
+All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path. To update an existing `MEDI` installation, see `prerelease`.
 
 ## Examples
 If an installation of [`MEDI`](https://github.com/pascalspincemaille/MEDI_toolbox) already exists, pull the `msmv` branch and modify the QSM reconstruction as follows:
-```
+```matlab
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
 ```
 If starting from a simple clone of this repository, run:
-```
+```matlab
 % Import complex field data
 [iField,voxel_size,matrix_size,CF,delta_TE,TE,B0_dir,files]=Read_DICOM('DICOM');
 
@@ -46,6 +50,9 @@ iField = iField/noise_level;
 
 % Estimate the frequency offset in each of the voxel using complex fitting 
 [iFreq_raw,N_std] = Fit_ppm_complex(iField);
+
+% Fit R2* map
+R2s = arlo(TEk,abs(iField));
 
 % CSF zero-reference
 Mask_CSF = extract_whole_CSF(R2s,Mask,voxel_size);
@@ -67,13 +74,29 @@ QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv', 5);
 ## Notes
 * The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped.
 * The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase.m` will be used.
-* The `mrm` branch contains code needed to reproduce figures in the [paper](https://arxiv.org/abs/2304.11476).
+* The `mrm` branch contains code needed to reproduce figures in the [paper](https://pubmed.ncbi.nlm.nih.gov/38169132/).
 
 ## Publications
 If this code is used, please cite the following:
 > [Magnetic Resonance in Medicine Article](https://onlinelibrary.wiley.com/doi/10.1002/mrm.29963): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 > 
 > [Preprint](https://arxiv.org/abs/2304.11476): A. G. Roberts et al., "Maximum Spherical Mean Value (mSMV) Filtering for Whole Brain Quantitative Susceptibility Mapping," arXiv pre-print server, 2023-04-22 2023, arxiv:2304.11476
-
+>
+## BibTex
+```bibtex
+@article{Roberts_mSMV_2024,
+   author = {Roberts, Alexandra G. and Romano, Dominick J. and Şişman, Mert and Dimov, Alexey V. and Nguyen, Thanh D. and Kovanlikaya, Ilhami and Gauthier, Susan A. and Wang, Yi and Spincemaille, Pascal},
+   title = {Maximum spherical mean value filtering for whole‐brain QSM},
+   journal = {Magnetic Resonance in Medicine},
+   volume = {91},
+   number = {4},
+   pages = {1586-1597},
+   ISSN = {0740-3194},
+   DOI = {10.1002/mrm.29963},
+   url = {https://dx.doi.org/10.1002/mrm.29963},
+   year = {2024},
+   type = {Journal Article}
+}
+```
 ## Contact
 Please direct questions to [Alexandra Roberts](https://github.com/agr78) at agr78@cornell.edu.
