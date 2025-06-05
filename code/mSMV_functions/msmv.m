@@ -21,41 +21,34 @@
 % Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 
 function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_mag,prefilter)
-    % Default to fixed radius
-    if radius > 0
-        vrad = 0;
-    else
-        vrad = 1;
-        radius = 5;
-    end
     % Default to prefiltering with SMV
-    if nargin <= 9
+    if nargin <= 9 || isempty(prefilter)
         prefilter = 1;
     else
         prefilter = 0;
     end
     % Default field strength
-    if nargin <= 8
+    if nargin <= 8 || isempty(B0_mag)
         B0_mag = 3;
     end
     % Default vessel size parameter
-    if nargin <= 7
+    if nargin <= 7 || isempty(vessel_radius)
         % Impose minimum vessel radius (Larson et. al)
         vessel_radius = max(15,8*max(voxel_size(:))); 
     end
     % Default iteration maximum
-    if nargin <= 6
+    if nargin <= 6 || isempty(maxk)
         maxk = 5;
     end
     % Default tmin
-    if nargin <= 5
+    if nargin <= 5 || isempty(tmin)
         tmin = 0.01;
     else
         disp('Using kernel limit parameter')
         tmin
     end
     % Default radius of 5 mm
-    if nargin <= 4
+    if nargin <= 4 || isempty(radius)
         radius = 5;
     end
 
@@ -74,11 +67,7 @@ function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_ma
 
     % Perform initial SMV, then address incorrect values at edge
     if prefilter == 1
-        if vrad == 0
-            RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
-        else
-            RDF_s = Mask.*vSMV(RDF,Mask,voxel_size,2*radius);
-        end
+        RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
     % Skip pre-filtering
     else 
         RDF_s = RDF;
@@ -95,10 +84,6 @@ function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_ma
     % Vessel mask
     Mask_ev = Mask-MaskErode(Mask,matrix_size,voxel_size,radius+1);
     Mv = imbinarize(fibermetric((Mask_ev.*R2s),[1:vessel_radius],'ObjectPolarity','bright'),0);
-    fopts.FrangiScaleRange=[1 vessel_radius];
-    fopts.FrangiScaleRatio=1;
-    fopts.BlackWhite=false;
-    Mv2 = FrangiFilter3D(Mask_ev.*R2s, fopts)>0;
     Mb = Mb == 1 & Mv == 0;
 
     % Perform additional filtering on estimated background field
