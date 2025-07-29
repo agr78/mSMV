@@ -92,7 +92,7 @@ if size(varargin,2)>0
     end
 end
 
-load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag');
+load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag','prefilter');
 opts.matrix_size = matrix_size;
 opts.voxel_size = voxel_size;
 opts.lam_CSF = lam_CSF;
@@ -168,6 +168,12 @@ if ismember('B0_mag', who('-file', opts.filename))
     opts.B0_mag = getfield(load(opts.filename, 'B0_mag'), 'B0_mag');
 else
     opts.B0_mag = [];
+end
+% Prefitler flag
+if ismember('prefilter', who('-file', opts.filename))
+    opts.prefilter = getfield(load(opts.filename, 'prefilter'), 'prefilter');
+else
+    opts.prefilter = [];
 end
 if sum(pad(:))
     matrix_size0 = matrix_size;

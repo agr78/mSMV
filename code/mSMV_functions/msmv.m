@@ -20,12 +20,10 @@
 % Filtering for Whole Brain Quantitative Susceptibility Mapping," 
 % Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 
-function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_mag,prefilter)
+function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_mag,prefilter)
     % Default to prefiltering with SMV
     if nargin <= 9 || isempty(prefilter)
         prefilter = 1;
-    else
-        prefilter = 0;
     end
     % Default field strength
     if nargin <= 8 || isempty(B0_mag)
@@ -68,6 +66,8 @@ function RDF = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_ma
     % Perform initial SMV, then address incorrect values at edge
     if prefilter == 1
         RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
+    elseif prefilter == -1
+        RDF_s = vSMV(RDF,Mask,voxel_size,radius);
     % Skip pre-filtering
     else 
         RDF_s = RDF;
