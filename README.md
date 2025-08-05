@@ -52,7 +52,7 @@ iField = iField/noise_level;
 [iFreq_raw,N_std] = Fit_ppm_complex(iField);
 
 % Fit R2* map
-R2s = arlo(TEk,abs(iField));
+R2s = arlo(TE,abs(iField));
 
 % CSF zero-reference
 Mask_CSF = extract_whole_CSF(R2s,Mask,voxel_size);
