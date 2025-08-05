@@ -5,7 +5,7 @@
 %   Last modified by Alexandra Roberts on 2023.27.12
 
 function [lam, iFreq, RDF, N_std, iMag, Mask, matrix_size, matrix_size0, voxel_size, ...
-    delta_TE, CF, B0_dir, merit, smv, msmv, radius, data_weighting, gradient_weighting, ... 
+    delta_TE, CF, B0_dir, merit, smv, radius, data_weighting, gradient_weighting, ... 
     Debug_Mode, lam_CSF, Mask_CSF, opts] = parse_QSM_input(varargin)
 
 merit = 1;
@@ -37,6 +37,7 @@ opts.max_iter = 10;
 opts.tol_norm_ratio = 0.1;
 opts.regs = struct;
 opts.smv_shrink_mask = 1;
+opts.tmin = 0.01;
 opts.resultsdir = fullfile(pwd, 'results');
 
 if size(varargin,2)>0
@@ -56,26 +57,22 @@ if size(varargin,2)>0
         if strcmpi(varargin{k},'nomerit')
             merit = 0;
         end
-        if strcmpi(varargin{k},'smv')
+        if strcmpi(varargin{k},'smv') || strcmpi(varargin{k},'msmv')
             smv = 1;
+            msmv = strcmpi(varargin{k},'msmv');
             if length(varargin)>k
                 radius = varargin{k+1};
-                disp(strcat('Using SMV with radius',{' '},string(radius)))
+                if msmv
+                    str = 'mSMV'; 
+                else
+                    str = 'SMV';
+                    msmv = 0;
+                end
+                fprintf('Using %s with radius %s\n',str,string(radius))
             end
         end
         if strcmpi(varargin{k},'nosmv')
             smv = 0;
-        end
-        if strcmpi(varargin{k},'msmv')
-            if smv == 1
-                disp('Cannot specify both SMV and mSMV filtering, using mSMV filtering')
-            end
-            msmv = 1;
-            smv = 0;
-            if length(varargin)>k
-                radius = varargin{k+1};
-                disp(strcat('Using mSMV with radius',{' '},string(radius)))
-            end
         end
         if strcmpi(varargin{k},'zeropad')
             pad = varargin{k+1};
@@ -86,8 +83,8 @@ if size(varargin,2)>0
         if strcmpi(varargin{k},'lambda_CSF')
             lam_CSF = varargin{k+1};
         end
-        fn = fieldnames(opts);
-        for j = 1:length(fn)
+        fn=fieldnames(opts);
+        for j=1:length(fn)
             if strcmpi(varargin{k},fn{j})
                 opts.(fn{j}) = varargin{k+1};
             end
@@ -95,12 +92,16 @@ if size(varargin,2)>0
     end
 end
 
-load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir', 'R2s');
+load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag','prefilter');
 opts.matrix_size = matrix_size;
 opts.voxel_size = voxel_size;
 opts.lam_CSF = lam_CSF;
 opts.Mask = Mask;
-opts.R2s = R2s;
+opts.msmv = msmv;
+if msmv
+    opts.smv_shrink_mask = 0; 
+end
+
 % CSF regularization
 if ismember('Mask_CSF', who('-file', opts.filename))
     Mask_CSF = logical(getfield(load(opts.filename, 'Mask_CSF'), 'Mask_CSF'));
@@ -144,6 +145,36 @@ else
     opts.R2s = [];
 end
 
+% Vessel radius
+if ismember('vessel_radius', who('-file', opts.filename))
+    opts.vessel_radius = getfield(load(opts.filename, 'vessel_radius'), 'vessel_radius');
+else
+    opts.vessel_radius = [];
+end
+% Minimum threshold
+if ismember('tmin', who('-file', opts.filename))
+    opts.tmin = getfield(load(opts.filename, 'tmin'), 'tmin');
+else
+    opts.tmin = [];
+end
+% Number of mSMV iterations
+if ismember('maxk', who('-file', opts.filename))
+    opts.maxk = getfield(load(opts.filename, 'maxk'), 'maxk');
+else
+    opts.maxk = [];
+end
+% Field strength
+if ismember('B0_mag', who('-file', opts.filename))
+    opts.B0_mag = getfield(load(opts.filename, 'B0_mag'), 'B0_mag');
+else
+    opts.B0_mag = [];
+end
+% Prefitler flag
+if ismember('prefilter', who('-file', opts.filename))
+    opts.prefilter = getfield(load(opts.filename, 'prefilter'), 'prefilter');
+else
+    opts.prefilter = [];
+end
 if sum(pad(:))
     matrix_size0 = matrix_size;
     matrix_size = matrix_size + pad;

@@ -15,10 +15,7 @@
 %   Last modified by Tian Liu on 2013.07.23
 
 function y = sphere_kernel(matrix_size,voxel_size, radius)
-
-[Y,X,Z]=meshgrid(-matrix_size(2)/2:matrix_size(2)/2-1,...
-                 -matrix_size(1)/2:matrix_size(1)/2-1,...
-                 -matrix_size(3)/2:matrix_size(3)/2-1);
+[Y,X,Z]=meshgrid(-matrix_size(2)/2:matrix_size(2)/2-1,-matrix_size(1)/2:matrix_size(1)/2-1,-matrix_size(3)/2:matrix_size(3)/2-1);
 
 X = X*voxel_size(1);
 Y = Y*voxel_size(2);

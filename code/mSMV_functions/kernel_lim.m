@@ -15,16 +15,19 @@ K = kvox_min.*min(voxel_size);
 eta = 1e-3;
 t = 0.001;
 k = 1;
+uvals = [];
+maxvals = [];
+radii = [];
 if nargin == 5
     while t < (0.01*B0_mag/3)
         [RDF_u] = SMV(RDF,matrix_size,voxel_size,K);
         RDF_smv = Mask.*(RDF-SMV(RDF,matrix_size,voxel_size,K));
         [maxval,idx] = max(abs(RDF_smv(:)));
-        uvals(k) = RDF_u(idx);
-        maxvals(k) = maxval;
+        uvals = [uvals RDF_u(idx)];
+        maxvals = [maxvals maxval];
         t = maxvals(k);
         K = K+eta;
-        radii(k) = K;
+        radii = [radii K];
         k = k+1;
     end
     disp(['New minimum threshold at',string(B0_mag),'T is' string(0.01*B0_mag/3)])
@@ -34,13 +37,11 @@ else
         [RDF_u] = SMV(RDF,matrix_size,voxel_size,K);
         RDF_smv = Mask.*(RDF-SMV(RDF,matrix_size,voxel_size,K));
         [maxval,idx] = max(abs(RDF_smv(:)));
-        uvals(k) = RDF_u(idx);
-        maxvals(k) = maxval;
+        uvals = [uvals RDF_u(idx)];
+        maxvals = [maxvals maxval];
         t = maxvals(k);
         K = K+eta;
-        radii(k) = K;
+        radii = [radii K];
         k = k+1;
     end
 end
-
-t
