@@ -49,56 +49,52 @@ function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_
     if nargin <= 4 || isempty(radius)
         radius = 5;
     end
-
+    
     % Get matrix dimensions
     matrix_size = size(RDF);
-
-    % Minimum radius
-    r2 = min(voxel_size(:))/2+0.05;
-
-    % Generate kernel
-    SphereK = single(sphere_kernel(matrix_size,voxel_size,radius));
-
-    % Partition mask
-    Me = Mask-SMV(Mask,SphereK) > 0.999;
-
-    % Perform initial SMV, then address incorrect values at edge
-    if prefilter == 1
-        RDF_s = Mask.*(RDF-SMV(RDF,SphereK));
-    elseif prefilter == -1
-        RDF_s = vSMV(RDF,Mask,voxel_size,radius);
-    % Skip pre-filtering
-    else 
-        RDF_s = RDF;
-        disp('Skipping initial SMV filtering')
-    end
 
     % Check if minimum threshold should be scaled
     t = kernel_lim(RDF,voxel_size,matrix_size,Mask,B0_mag,tmin);
 
+    % Minimum radius
+    r2 = min(voxel_size(:))/2+0.05;
+
+    % Partition mask
+    Me = Mask-SMV(Mask,single(sphere_kernel(matrix_size,voxel_size,radius))) > 0.999;
+
+    % Perform initial SMV, then address incorrect values at edge
+    if prefilter == 1
+        RDF = Mask.*(RDF-SMV(RDF,SphereK));
+    elseif prefilter == -1
+        disp('Using variable radius filtering with maximum radius of '+string(radius))
+        RDF = vSMV(RDF,Mask,voxel_size,radius);
+    % Skip pre-filtering
+    else 
+        disp('Skipping initial SMV filtering')
+    end
+
     % Create mask of known background field
-    Mb = imbinarize(abs(Me.*RDF_s),t);
+    Mb = imbinarize(abs(Me.*RDF),t);
     
     % Vessel mask
     fopts.FrangiScaleRange=[1 vessel_radius];
     fopts.FrangiScaleRatio=1;
     fopts.BlackWhite=false;
-    Mv = FrangiFilter3D(Mask-MaskErode(Mask,matrix_size,voxel_size,radius+1).*R2s, fopts)>0;
+    Mv = FrangiFilter3D(double(Mask-MaskErode(Mask,matrix_size,voxel_size,radius+1).*R2s), fopts)>0;
+    clear R2s
     Mb = Mb == 1 & Mv == 0;
     
     % Perform additional filtering on estimated background field
     k = 1;
     disp(memory)
     while sum(Mb(:))/sum(Mask(:)) > 1e-9%0.000001
-        Mb = imbinarize(abs(Me.*RDF_s),t) == 1;
+        Mb = imbinarize(abs(Me.*RDF),t) == 1;
         Mb = Mb == 1 & Mv == 0;
-        RDF_s = Mask.*(RDF_s-SMV(Mb.*RDF_s,matrix_size,voxel_size,r2));
+        RDF = Mask.*(RDF-SMV(Mb.*RDF,matrix_size,voxel_size,r2));
         k = k+1;
         if k > maxk-1
             break
         end
     end
-    % Prepare for reconstruction
-    RDF = RDF_s;
 
 end

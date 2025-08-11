@@ -126,7 +126,7 @@ for i = 1:length(sigmas),
     expRa = (1-exp(-(Ra.^2./A)));
     expRb =    exp(-(Rb.^2./B));
     expS  = (1-exp(-S.^2./(2*options.FrangiC^2)));
-    keyboard
+    % keyboard
     % Free memory
     clear S A B C Ra Rb
 

@@ -50,7 +50,7 @@ if(sigma>0)
             Hx=reshape(H,[length(H) 1 1]);
             Hy=reshape(H,[1 length(H) 1]);
             Hz=reshape(H,[1 1 length(H)]);
-            I=imfilter(imfilter(imfilter(I,Hx, 'same' ,'replicate'),Hy, 'same' ,'replicate'),Hz, 'same' ,'replicate');
+            I=imfilter(double(imfilter(imfilter(double(I),double(Hx), 'same' ,'replicate'),double(Hy), 'same' ,'replicate')),double(Hz), 'same' ,'replicate');
         end
     else
         error('imgaussian:input','unsupported input dimension');
