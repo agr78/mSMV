@@ -92,7 +92,7 @@ if size(varargin,2)>0
     end
 end
 
-load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag','prefilter');
+load(opts.filename,'iFreq','RDF', 'N_std', 'iMag', 'Mask', 'matrix_size', 'voxel_size', 'delta_TE' ,'CF', 'B0_dir','vessel_radius','tmin','maxk', 'B0_mag');
 opts.matrix_size = matrix_size;
 opts.voxel_size = voxel_size;
 opts.lam_CSF = lam_CSF;
@@ -109,6 +109,14 @@ else
     Mask_CSF = [];
 end
 opts.Mask_CSF = Mask_CSF;
+
+% Field map
+if ismember('iFreq', who('-file', opts.filename))
+    iFreq = logical(getfield(load(opts.filename, 'iFreq'), 'iFreq'));
+else
+    iFreq = [];
+end
+opts.iFreq = iFreq;
 
 if ismember('weightS', who('-file', opts.filename))
     opts.weightS = getfield(load(opts.filename, 'weightS'), 'weightS');
@@ -169,12 +177,13 @@ if ismember('B0_mag', who('-file', opts.filename))
 else
     opts.B0_mag = [];
 end
-% Prefitler flag
-if ismember('prefilter', who('-file', opts.filename))
-    opts.prefilter = getfield(load(opts.filename, 'prefilter'), 'prefilter');
+% Save mSMV output
+if ismember('save_msmv', who('-file', opts.filename))
+    opts.save_msmv = getfield(load(opts.filename, 'save_msmv'), 'save_msmv');
 else
-    opts.prefilter = [];
+    opts.save_msmv = [];
 end
+
 if sum(pad(:))
     matrix_size0 = matrix_size;
     matrix_size = matrix_size + pad;

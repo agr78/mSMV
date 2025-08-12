@@ -38,6 +38,7 @@
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
 %   Last modified by Alexandra Roberts on 2022.04.01 add mSMV
+%   Last modified by Alexandra Roberts on 2025.08.12 add msmv_save flag
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
@@ -56,35 +57,29 @@ bc = 0;
 N_std = N_std.*Mask;
 tempn = single(N_std);
 D = dipole_kernel(matrix_size, voxel_size, B0_dir);
-disp('Prefilter')
-disp(opts.prefilter)
+
 if smv == 1
     if radius < 0
         radius = 5;
     end
-%     if opts.prefilter == -1
-%         SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
-%         disp('Using variable SphereK')
-%     else
-        SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
-    %end
+    SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
     if opts.smv_shrink_mask && ~opts.msmv
         disp('Eroding mask')
         Mask = SMV(Mask, SphereK)>0.999;
         RDF = Mask.*(RDF - SMV(RDF, SphereK));
     end   
     if opts.msmv
-        tic; RDF = msmv(RDF,Mask,opts.R2s,voxel_size,radius,opts.tmin,opts.maxk,opts.vessel_radius,opts.B0_mag,opts.prefilter); toc;
-        %save RDF_msmv.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE CF B0_dir Mask_CSF R2s;
-%         save('MEDI_RDF.mat','RDF','RDF_pre','Mask','opts','voxel_size'); 
+        tic; RDF = msmv(RDF,Mask,opts.R2s,voxel_size,radius,opts.tmin,opts.maxk,opts.vessel_radius,opts.B0_mag); toc;
+        if opts.save_msmv == 1
+            disp('Saving local field for source separation in `RDF_msmv.mat`')
+            R2s = opts.R2s;
+            iFreq = opts.iFreq;
+            save RDF_ss.mat RDF iMag iFreq N_std Mask matrix_size voxel_size delta_TE CF B0_dir Mask_CSF R2s;
+        end
+        %         save('MEDI_RDF.mat','RDF','RDF_pre','Mask','opts','voxel_size'); 
     end
-    opts.prefilter
-    if opts.prefilter ~= 0
-        D = (1-SphereK).*D;
-        tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
-    else
-        disp('No prefilter')
-    end
+    D = (1-SphereK).*D;
+    tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
 else
 end
 
@@ -154,6 +149,7 @@ else
 end
 b0 = B(opts.m, RDF);
 
+oldN_std=N_std;
 fprintf(['Using ' opts.solver '\n']);
 switch opts.solver
     case 'gaussnewton'
