@@ -64,7 +64,7 @@ function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_
 
     % Perform initial SMV, then address incorrect values at edge
     if prefilter == 1
-        RDF = Mask.*(RDF-SMV(RDF,SphereK));
+        RDF = Mask.*(RDF-SMV(RDF,single(sphere_kernel(matrix_size,voxel_size,radius))));
     elseif prefilter == -1
         disp('Using variable radius filtering with maximum radius of '+string(radius))
         RDF = vSMV(RDF,Mask,voxel_size,radius);
