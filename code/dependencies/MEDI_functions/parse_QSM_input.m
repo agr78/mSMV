@@ -110,6 +110,14 @@ else
 end
 opts.Mask_CSF = Mask_CSF;
 
+% Field map
+if ismember('iFreq', who('-file', opts.filename))
+    iFreq = logical(getfield(load(opts.filename, 'iFreq'), 'iFreq'));
+else
+    iFreq = [];
+end
+opts.iFreq = iFreq;
+
 if ismember('weightS', who('-file', opts.filename))
     opts.weightS = getfield(load(opts.filename, 'weightS'), 'weightS');
 else
@@ -169,6 +177,13 @@ if ismember('B0_mag', who('-file', opts.filename))
 else
     opts.B0_mag = [];
 end
+% Save mSMV output
+if ismember('save_msmv', who('-file', opts.filename))
+    opts.save_msmv = getfield(load(opts.filename, 'save_msmv'), 'save_msmv');
+else
+    opts.save_msmv = [];
+end
+
 if sum(pad(:))
     matrix_size0 = matrix_size;
     matrix_size = matrix_size + pad;

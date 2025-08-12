@@ -38,6 +38,7 @@
 %   Last modified by Tian Liu on 2014.12.15
 %   Last modified by Zhe Liu on 2017.11.06
 %   Last modified by Alexandra Roberts on 2022.04.01 add mSMV
+%   Last modified by Alexandra Roberts on 2025.08.12 add msmv_save flag
 
 function [x, cost_reg_history, cost_data_history, resultsfile] = MEDI_L1(varargin)
 
@@ -69,8 +70,13 @@ if smv == 1
     end   
     if opts.msmv
         tic; RDF = msmv(RDF,Mask,opts.R2s,voxel_size,radius,opts.tmin,opts.maxk,opts.vessel_radius,opts.B0_mag); toc;
-        %save RDF_msmv.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE CF B0_dir Mask_CSF R2s;
-%         save('MEDI_RDF.mat','RDF','RDF_pre','Mask','opts','voxel_size'); 
+        if opts.save_msmv == 1
+            disp('Saving local field for source separation in `RDF_msmv.mat`')
+            R2s = opts.R2s;
+            iFreq = opts.iFreq;
+            save RDF_ss.mat RDF iMag iFreq N_std Mask matrix_size voxel_size delta_TE CF B0_dir Mask_CSF R2s;
+        end
+        %         save('MEDI_RDF.mat','RDF','RDF_pre','Mask','opts','voxel_size'); 
     end
     D = (1-SphereK).*D;
     tempn = sqrt(SMV(tempn.^2, SphereK)+tempn.^2);
