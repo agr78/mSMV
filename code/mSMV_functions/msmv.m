@@ -12,7 +12,8 @@
 % maxk - Maximum number of residual background field removal iterations
 % vessel_radius - Maximum vessel radius in R2* map
 % prefilter - Prefilter flag, 0 if SMV filter previously used (i.e. VSHARP)
-%
+% header - NIFTI header, write to RDF_msmv.nii.gz if not empty
+
 % Output: Filtered RDF
 %
 % Please cite:
@@ -20,7 +21,12 @@
 % Filtering for Whole Brain Quantitative Susceptibility Mapping," 
 % Magnetic Resonance in Medicine, 2024, DOI: 10.1002/mrm.29963
 
-function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_mag,prefilter)
+function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_mag,prefilter,header)
+
+    % Default to prefiltering with SMV
+    if nargin <= 10 || isempty(header)
+        header = [];
+    end
     % Default to prefiltering with SMV
     if nargin <= 9 || isempty(prefilter)
         prefilter = 1;
@@ -95,6 +101,10 @@ function [RDF] = msmv(RDF,Mask,R2s,voxel_size,radius,tmin,maxk,vessel_radius,B0_
         if k > maxk-1
             break
         end
+    end
+
+    if ~isempty(header)
+        niftiwrite(RDF,'RDF_msmv',header,'Compressed','True')
     end
 
 end
