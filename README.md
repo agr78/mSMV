@@ -98,4 +98,4 @@ If this code is used, please cite the following:
 }
 ```
 ## Contact
-Please direct questions to [Alexandra Roberts](https://github.com/agr78) at agr78@cornell.edu.
+Please direct questions to [Alexandra G. Roberts](https://github.com/agr78) at agr78@cornell.edu.
