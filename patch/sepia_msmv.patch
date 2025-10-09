@@ -1,0 +1,309 @@
+diff --git a/gui_func/callback/config/get_set_qsm_medi.m b/gui_func/callback/config/get_set_qsm_medi.m
+index 265a528..ec0e9b1 100644
+--- a/gui_func/callback/config/get_set_qsm_medi.m
++++ b/gui_func/callback/config/get_set_qsm_medi.m
+@@ -24,9 +24,11 @@ str_pattern = {'.qsm.lambda',...
+                '.qsm.zeropad',...
+                '.qsm.isSMV',...
+                '.qsm.radius',...
++               '.qsm.erode',...
+                '.qsm.merit',...
+                '.qsm.isLambdaCSF',...
+-               '.qsm.lambdaCSF'};
++               '.qsm.lambdaCSF',...
++               '.qsm.maskCSF'};
+ 
+ action_handle = {h.qsm.MEDI.edit.lambda,...
+                  h.qsm.MEDI.edit.weightData,...
+@@ -34,9 +36,11 @@ action_handle = {h.qsm.MEDI.edit.lambda,...
+                  h.qsm.MEDI.edit.zeropad,...
+                  h.qsm.MEDI.checkbox.smv,...
+                  h.qsm.MEDI.edit.smv_radius,...
++                 h.qsm.MEDI.checkbox.erode,...
+                  h.qsm.MEDI.checkbox.merit,...
+                  h.qsm.MEDI.checkbox.lambda_csf,...
+-                 h.qsm.MEDI.edit.lambda_csf};
++                 h.qsm.MEDI.edit.lambda_csf,...
++                 h.qsm.MEDI.popup.mask_csf,};
+            
+ switch lower(mode)
+     case 'set'
+@@ -56,6 +60,9 @@ switch lower(mode)
+         % radius
+         k = k+1;
+         fprintf(fid,'algorParam%s = %s ;\n'             ,str_pattern{k},get(action_handle{k},	'String'));
++        % erode
++        k = k+1;
++        fprintf(fid,'algorParam%s = %i ;\n'             ,str_pattern{k},get(action_handle{k},	'Value'));
+         % merit
+         k = k+1;
+         fprintf(fid,'algorParam%s = %i ;\n'             ,str_pattern{k},get(action_handle{k},	'Value'));
+@@ -65,6 +72,9 @@ switch lower(mode)
+         % lambda_csf
+         k = k+1;
+         fprintf(fid,'algorParam%s = %s ;\n'             ,str_pattern{k},get(action_handle{k},	'String'));
++        % mask_csf
++        k = k+1;
++        fprintf(fid,'algorParam%s = %i ;\n'             ,str_pattern{k},get(action_handle{k},	'Value'));
+         
+     case 'get'
+         
+@@ -96,6 +106,11 @@ switch lower(mode)
+         val             = get_num_as_string(config_txt, pattern_curr, '=', ';');
+         set_non_nan_value(action_handle{k},'String',val);
+ 
++        % Erode
++        k = k+1;
++        pattern_curr    = str_pattern{k};
++        val             = get_num_as_string(config_txt, pattern_curr, '=', ';');
++        set_non_nan_value(action_handle{k}, 'Value', str2double(val))
+ 
+         % Merit
+         k = k+1;
+@@ -116,4 +131,16 @@ switch lower(mode)
+         val             = get_num_as_string(config_txt, pattern_curr, '=', ';');
+         set_non_nan_value(action_handle{k},'String',val);
+ 
++        % mask CSF type
++        k = k+1;
++        pattern_curr    = str_pattern{k};
++        val             = get_string_as_string(config_txt, pattern_curr);
++        switch lower(val)
++            case 'global'
++                set_non_nan_value(action_handle{k},'Value',1)
++            case 'ventricle'
++                set_non_nan_value(action_handle{k},'Value',2)
++            case 'inverse'
++                set_non_nan_value(action_handle{k},'Value',3)
++        end
+ end
+\ No newline at end of file
+diff --git a/gui_func/callback/config/sepia_print_popup_as_string.m b/gui_func/callback/config/sepia_print_popup_as_string.m
+index 33c9404..7f296f1 100644
+--- a/gui_func/callback/config/sepia_print_popup_as_string.m
++++ b/gui_func/callback/config/sepia_print_popup_as_string.m
+@@ -23,5 +23,4 @@ function val = sepia_print_popup_as_string(fid,str_pattern,action_handle)
+ val = action_handle.String{action_handle.Value,1};
+ 
+ fprintf(fid,'algorParam%s = ''%s'' ;\n'     ,str_pattern,val);
+-
+ end
+\ No newline at end of file
+diff --git a/gui_func/panel/QSM_method/sepia_handle_panel_qsm_MEDI.m b/gui_func/panel/QSM_method/sepia_handle_panel_qsm_MEDI.m
+index 1ca8868..40c47a1 100644
+--- a/gui_func/panel/QSM_method/sepia_handle_panel_qsm_MEDI.m
++++ b/gui_func/panel/QSM_method/sepia_handle_panel_qsm_MEDI.m
+@@ -29,6 +29,7 @@ defaultSMV              = 5;
+ defaultLambda_csf       = 100;
+ defaultPercentage       = 90;
+ 
++menuCSF       = {'Global','Ventricles','Inverse'};
+ %% Tooltips
+ tooltip.qsm.MEDI.lambda   	= 'Regularisation parameter';
+ tooltip.qsm.MEDI.zeropad	= 'Zero padding after the last element';
+@@ -63,37 +64,51 @@ h.qsm.panel.MEDI = uipanel(hParent,...
+ 
+     % col 2, row 1
+     % text|edit field pair: size of zero padding
+-    [h.qsm.MEDI.text.zeropad,h.qsm.MEDI.edit.zeropad] = sepia_construct_text_edit(...
+-        panelParent,'Zeropad (x,y,z):',         defaultZeropad,     [left(2) bottom(1) width height], wratio, true);
++    % checkbox|edit field pair: regulariation of CSF
++    [h.qsm.MEDI.checkbox.lambda_csf,h.qsm.MEDI.edit.lambda_csf] = sepia_construct_checkbox_edit(...
++        panelParent,'Lambda CSF:',              defaultLambda_csf,  [left(2) bottom(1) width height], wratio);
++    
++    % col 2, row 3
++    % text|popup field pair: solver
++    [h.qsm.MEDI.text.mask_csf,h.qsm.MEDI.popup.mask_csf] = sepia_construct_text_popup(...
++        panelParent,'CSF mask type:',                  menuCSF,         [left(2) bottom(2) width height], wratio);
+ 
+     % col 1, row 2
+     % text|edit field pair: weighting of phase data
+     [h.qsm.MEDI.text.weightData,h.qsm.MEDI.edit.weightData] = sepia_construct_text_edit(...
+         panelParent,'Data weight Mode (0/1):',  defaultWeightData,	[left(1) bottom(2) width height], wratio);
+ 
+-    % col 2, row 2
++    % col 2, row 3
+     % text|edit field pair: weighting of gradient of magnitude data
+     [h.qsm.MEDI.text.percentage,h.qsm.MEDI.edit.percentage] = sepia_construct_text_edit(...
+-        panelParent,'Edge mask threshold (%)',  defaultPercentage,  [left(2) bottom(2) width height], wratio);
++        panelParent,'Edge mask threshold (%)',  defaultPercentage,  [left(2) bottom(3) width height], wratio);
+ 
+-    % col 1, row 3
++    % col 1, row 4
+     % checkbox|edit field pair: SMV size
+     [h.qsm.MEDI.checkbox.smv,h.qsm.MEDI.edit.smv_radius] = sepia_construct_checkbox_edit(...
+-        panelParent,'SMV, radius',              defaultSMV,         [left(1) bottom(3) width height], wratio);
++        panelParent,'mSMV, radius',              defaultSMV,         [left(1) bottom(4) width height], wratio);
+     
+-    % col 2, row 3
++    % col 2, row 4
++    % checkbox: Erosion
++     h.qsm.MEDI.checkbox.erode = uicontrol('Parent',h.qsm.panel.MEDI,'Style','checkbox',...
++        'String','Erode',...
++        'units','normalized','position',[left(2) bottom(4) width height],...
++        'HorizontalAlignment','left',...
++        'backgroundcolor',get(h.fig,'color'));
++    
++    % col 1, row 3
++    % text|edit field pair: size of zero padding
++    [h.qsm.MEDI.text.zeropad,h.qsm.MEDI.edit.zeropad] = sepia_construct_text_edit(...
++        panelParent,'Zeropad (x,y,z):',         defaultZeropad,     [left(1) bottom(3) width height], wratio, true);
++
++    % col 3, row 4
+     % checkbox: Merit
+     h.qsm.MEDI.checkbox.merit = uicontrol('Parent',h.qsm.panel.MEDI,'Style','checkbox',...
+         'String','Merit',...
+-        'units','normalized','position',[left(2) bottom(3) width height],...
++        'units','normalized','position',[1.67*left(2) bottom(4) width height],...
+         'HorizontalAlignment','left',...
+         'backgroundcolor',get(h.fig,'color'));
+ 
+-    % col 1, row 4
+-    % checkbox|edit field pair: regulariation of CSF
+-    [h.qsm.MEDI.checkbox.lambda_csf,h.qsm.MEDI.edit.lambda_csf] = sepia_construct_checkbox_edit(...
+-        panelParent,'Lambda CSF:',              defaultLambda_csf,  [left(1) bottom(4) width height], wratio);
+-    
+ %     % deprecated
+ %     % text|edit field pair: weighting of gradient of magnitude data
+ %     h.qsm.MEDI.text.weightGradient = uicontrol('Parent',h.qsm.panel.MEDI,'Style','text',...
+diff --git a/wrapper/SepiaIOWrapper.m b/wrapper/SepiaIOWrapper.m
+index ec88c63..0ab60b4 100644
+--- a/wrapper/SepiaIOWrapper.m
++++ b/wrapper/SepiaIOWrapper.m
+@@ -181,9 +181,10 @@ clear fieldmapUnwrapAllEchoes
+ % save the total fieldmap                       
+ fprintf('Saving unwrapped fieldmap...');
+ save_nii_quick(outputNiftiTemplate,totalField,  outputFileList.totalField);
++save_nii_quick(outputNiftiTemplate,fieldmapSD,  outputFileList.fieldmapSD);
+ fprintf('Done.\n');
+ availableFileList.totalField = outputFileList.totalField;
+-
++availableFileList.fieldmapSD = outputFileList.fieldmapSD;
+ %%%%%%%%%% Step 2: exclude unreliable voxel, based on monoexponential decay model %%%%%%%%%%
+ % only work with multi-echo data
+ if length(TE) == 1 && ~isinf(exclude_threshold)
+diff --git a/wrapper/WrapperQSM/Wrapper_QSM_MEDI.m b/wrapper/WrapperQSM/Wrapper_QSM_MEDI.m
+index 96e947d..33323a9 100644
+--- a/wrapper/WrapperQSM/Wrapper_QSM_MEDI.m
++++ b/wrapper/WrapperQSM/Wrapper_QSM_MEDI.m
+@@ -34,10 +34,11 @@ pad         = algorParam.qsm.zeropad;
+ percentage  = algorParam.qsm.percentage;
+ isSMV       = algorParam.qsm.isSMV;
+ radius      = algorParam.qsm.radius;
++isErode     = algorParam.qsm.erode;
+ isMerit     = algorParam.qsm.merit;
+ isLambdaCSF = algorParam.qsm.isLambdaCSF;
+ lam_CSF     = algorParam.qsm.lambdaCSF;
+-
++type_CSF    = algorParam.qsm.maskCSF;       
+ wGrad       = 1;
+ 
+ % get extra data such as magnitude/weights/B0 direction/TE/etc.
+@@ -46,7 +47,16 @@ B0_dir      = headerAndExtraData.sepia_header.B0_dir;
+ delta_TE    = headerAndExtraData.sepia_header.delta_TE;
+ TE          = headerAndExtraData.sepia_header.TE;
+ CF          = headerAndExtraData.sepia_header.CF;
+-N_std       = get_variable_from_headerAndExtraData(headerAndExtraData, 'weights', matrixSize); % contrast of N_std is inverse of weights, still need processing
++try
++    N_std       = get_variable_from_headerAndExtraData(headerAndExtraData, 'fieldmapSD', matrixSize); % covariance from field fitting
++catch
++    disp('Did not load fieldmap covariance, using weights')
++    N_std       = get_variable_from_headerAndExtraData(headerAndExtraData, 'weights', matrixSize); % contrast of N_std is inverse of weights, still need processing
++    N_std               = (1./N_std).*mask;
++    N_std(isnan(N_std)) = 0;
++    N_std(isinf(N_std)) = 0;
++    N_std = N_std / norm(N_std(mask>0));
++end
+ iMag        = get_variable_from_headerAndExtraData(headerAndExtraData, 'magnitude', matrixSize);
+ 
+ matrix_size = matrixSize;
+@@ -61,10 +71,6 @@ sepia_addpath('MEDI');
+ addpath(fullfile(SEPIA_HOME,'misc','qsm_algorithm','MEDI_L1'));
+ 
+ %% Preparation
+-N_std               = (1./N_std).*mask;
+-N_std(isnan(N_std)) = 0;
+-N_std(isinf(N_std)) = 0;
+-N_std = N_std / norm(N_std(mask>0));
+ 
+ if length(TE) < 3 && isLambdaCSF
+     warning('CSF regularisation requires data with more than 3 echoes');
+@@ -72,17 +78,26 @@ if length(TE) < 3 && isLambdaCSF
+     isLambdaCSF = false;
+ end
+ 
++% R2* mapping
++r2s         = arlo(TE,iMag);
+ % zero reference using CSF requires CSF mask
+-if isLambdaCSF && ~isempty(iMag)
++if isLambdaCSF && ~isempty(iMag) || isSMV
+     disp('Extracting CSF mask....');
+-    % R2* mapping
+-    r2s         = arlo(TE,iMag);
+-    Mask_CSF    = extract_CSF(r2s,mask,voxelSize)>0;
++    if type_CSF == 2
++        Mask_CSF    = extract_CSF(r2s,mask,voxelSize,0,5*(round(CF/42.5e6)/3))>0;
++    elseif type_CSF == 3
++        Mask_CSF    = 1-Mask;
++    else
++        Mask_CSF    = extract_all_CSF(r2s,mask,voxelSize,0,5*(round(CF/42.5e6)/3))>0;
++    end
+ %             magn    = sqrt(sum(magn.^2,4));
+ end
+ 
+ % compress 4D info to 3D
+ iMag = sqrt(sum(abs(iMag).^2,4));
++
++% Save R2*
++R2s = r2s;
+         
+ % MEDI input expects local field in rad
+ RDF = RDF*2*pi*delta_TE;
+@@ -91,7 +106,7 @@ tmp_output_dir  = [pwd filesep];
+ tmp_filename    = [tmp_output_dir 'tmp_RDF.mat'];
+ % matching naming convension for MEDI_L1
+ 
+-save(tmp_filename,'iFreq','RDF','N_std','iMag','Mask','matrix_size','voxel_size','delta_TE','CF','B0_dir','Mask_CSF');
++save(tmp_filename,'iFreq','RDF','N_std','iMag','Mask','matrix_size','voxel_size','delta_TE','CF','B0_dir','Mask_CSF','R2s','-v7.3');
+ 
+ if exist(fullfile('.','results'),'dir')
+     isResultDirMEDIExist = true;
+@@ -117,12 +132,24 @@ end
+ 
+ %% main
+ percentage = percentage/100;
+-
+-if isSMV
+-    chi = MEDI_L1('filename',tmp_filename,'lambda',lambda,'data_weighting',wData,'gradient_weighting',wGrad,...
+-              'merit',isMerit,'smv',radius,'zeropad',pad,'lambda_CSF',lam_CSF,'percentage',percentage);
+-    SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
+-    mask = SMV(Mask, SphereK)>0.999;
++disp(percentage)
++disp(lambda)
++disp(wData)
++disp(wGrad)
++disp(lam_CSF)
++disp(pad)
++disp(isMerit)
++disp(isSMV)
++if isSMV 
++    if isErode
++        chi = MEDI_L1('filename',tmp_filename,'lambda',lambda,'data_weighting',wData,'gradient_weighting',wGrad,...
++                  'merit',isMerit,'smv',radius,'zeropad',pad,'lambda_CSF',lam_CSF,'percentage',percentage);
++        SphereK = single(sphere_kernel(matrix_size, voxel_size,radius));
++        mask = SMV(Mask, SphereK)>0.999;
++    else
++        chi = MEDI_L1('filename',tmp_filename,'lambda',lambda,'data_weighting',wData,'gradient_weighting',wGrad,...
++        'merit',isMerit,'msmv',radius,'zeropad',pad,'lambda_CSF',lam_CSF,'percentage',percentage);
++    end
+ else
+     chi = MEDI_L1('filename',tmp_filename,'lambda',lambda,'data_weighting',wData,'gradient_weighting',wGrad,...
+               'merit',isMerit,'zeropad',pad,'lambda_CSF',lam_CSF,'percentage',percentage);
+@@ -153,6 +180,7 @@ try algorParam2.qsm.zeropad     = algorParam.qsm.zeropad;       catch; algorPara
+ try algorParam2.qsm.percentage  = algorParam.qsm.percentage;    catch; algorParam2.qsm.percentage   = 0.9;  end
+ try algorParam2.qsm.isSMV       = algorParam.qsm.isSMV;         catch; algorParam2.qsm.isSMV        = false;end
+ try algorParam2.qsm.radius      = algorParam.qsm.radius;        catch; algorParam2.qsm.radius       = 5;    end
++try algorParam2.qsm.erode       = algorParam.qsm.erode;         catch; algorParam2.qsm.erode        = false;end
+ try algorParam2.qsm.merit       = algorParam.qsm.merit;         catch; algorParam2.qsm.merit        = false;end
+ try algorParam2.qsm.isLambdaCSF = algorParam.qsm.isLambdaCSF;   catch; algorParam2.qsm.isLambdaCSF  = false;end
+ try algorParam2.qsm.lambdaCSF   = algorParam.qsm.lambdaCSF;     catch; algorParam2.qsm.lambdaCSF    = 100;  end
