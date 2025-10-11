@@ -70,7 +70,15 @@ save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE
 % Reconstruct QSM
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv', 5);
 ```
-
+For use with the `SEPIA` toolbox, apply the patch by creating a new branch
+```
+# In the SEPIA directory
+git checkout -b msmv
+```
+Then apply the patch with
+```
+git apply --reject --whitespace=fix ~\mSMV\patch\sepia_msmv.patch
+```
 ## Notes
 * The vessel mask requires an $R_2^*$ map for generation, if this variable is missing in `in_file`, this step will be skipped.
 * The default phase unwrapping algorithm is [`ROMEO`](https://github.com/korbinian90/ROMEO), called from a MATLAB [`mex`](https://www.mathworks.com/help/matlab/ref/mex.html) file compiled on Windows 10. On different operating systems, `unwrapPhase.m` will be used.
