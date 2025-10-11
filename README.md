@@ -1,6 +1,6 @@
 ## Maximum Spherical Mean Value for Shadow Reduction (mSMV) <a id="msmv"> 
 ### Contents
-[Whole brain atlas construction](https://github.com/agr78/mSMV/blob/atlas/README.md) <br/>
+[Atlas construction](https://github.com/agr78/mSMV/blob/atlas/README.md) <br/>
 [_Ex vivo_ susceptibility](https://github.com/agr78/mSMV/blob/xv/README.md) <br/>
 <a href="#summary" onclick="window.open('#summary', '_self');">Whole brain susceptibility</a>
 ## Summary 
