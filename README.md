@@ -70,7 +70,7 @@ save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE
 % Reconstruct QSM
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv', 5);
 ```
-For use with the `SEPIA` toolbox, apply the patch by creating a new branch
+For use with the [`SEPIA` toolbox](https://github.com/kschan0214/sepia), apply the patch by creating a new branch
 ```
 # In the SEPIA directory
 git checkout -b msmv
