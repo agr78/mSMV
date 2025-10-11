@@ -77,6 +77,7 @@ git checkout -b msmv
 ```
 Then apply the patch with
 ```console
+# Apply clean changes
 git apply --reject --whitespace=fix ~\mSMV\patch\sepia_msmv.patch
 ```
 ## Notes
