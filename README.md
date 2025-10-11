@@ -28,6 +28,7 @@ For ease of use with the [`MEDI Toolbox`](https://github.com/pascalspincemaille/
 All necessary toolboxes are included in `mSMV/code/dependencies/`. If these toolboxes are already installed, `mSMV/code/mSMV_functions/` can be added to the MATLAB path. To update an existing `MEDI` installation, see `prerelease`.
 
 ## Examples
+### MEDI
 If an installation of [`MEDI`](https://github.com/pascalspincemaille/MEDI_toolbox) already exists, pull the `msmv` branch and modify the QSM reconstruction as follows:
 ```matlab
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv');
@@ -70,6 +71,7 @@ save RDF.mat RDF iFreq iFreq_raw iMag N_std Mask matrix_size voxel_size delta_TE
 % Reconstruct QSM
 QSM = MEDI_L1('filename', 'RDF.mat', 'lambda', 1000, 'merit', 'msmv', 5);
 ```
+### SEPIA
 For use with the [`SEPIA` toolbox](https://github.com/kschan0214/sepia), create and switch to a new branch
 ```console
 # In the SEPIA directory
